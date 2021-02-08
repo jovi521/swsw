@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicRoadMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicRoad">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="start_station" property="startStation"/>
+        <result column="end_station" property="endStation"/>
+        <result column="lonlat_stop" property="lonlatStop"/>
+        <result column="highlight_color" property="highlightColor"/>
+        <result column="level" property="level"/>
+    </resultMap>
+
+    <insert id="insertRoad">
+        insert into dic_road(start_station, end_station, lonlat_stop, highlight_color, level)
+        values (#{startStation}, #{endStation}, #{lonlatStop}, #{highlightColor}, #{level})
+    </insert>
+
+    <select id="selectRoad" resultMap="BaseResultMap">
+        select * from dic_road
+        <where>
+            <if test="startStation == null and endStation == null">
+                level >= 1
+            </if>
+            <if test="startStation != null and endStation != null">
+                (start_station = #{startStation}
+                and end_station = #{endStation})
+                or
+                (start_station = #{endStation}
+                and end_station = #{startStation})
+            </if>
+            <if test="startStation != null and endStation == null">
+                start_station = #{startStation}
+                or
+                end_station = #{startStation}
+            </if>
+            <if test="startStation == null and endStation != null">
+                start_station = #{endStation}
+                or
+                end_station = #{endStation}
+            </if>
+        </where>
+    </select>
+</mapper>

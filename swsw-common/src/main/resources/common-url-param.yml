@@ -1,0 +1,58 @@
+common:
+  param:
+    url: http://10.194.130.41:10000/cimiss-web/api
+    userId1: zdc
+    pwd1: 0b378c4f890f52055cb340edf238857d2fc51833ad2cbfd5b0ee14c394fd67d0
+    userId2: qxt_dlyb
+    pwd2: 952bdaacd3ca8a9fe3e5d2a09476dfc0b99d5fb4ac13cc8a2d8ac05bbbff5cec
+    #    接口名称
+    interfaceId-ats-getSurf: getSurfEleInRegionByTimeRange
+    interfaceId-sat-getSate: getSateFileByTimeRange
+    interfaceId-radWea-getRada: getRadaFileByTimeRangeAndStaId
+    interfaceId-radWin-getRada: getUparFileByTimeRangeAndStaID
+    interfaceId-thunder-getRada: getUparLightEleInRectByTimeRange
+    interfaceId-cldas1km-getNafp: getNafpFileByElementsAndTimeRange
+    interfaceId-grapes3km-getSevp: getSevpFileByTimeRange
+    dataFormat: json
+    #    产品名称(资料代码)
+    dataCodeAtstation: SURF_CHN_MUL_HOR
+    dataCodeSatellite: SATE_GEO_IMAGE_CLOUD_F2G
+    #    暂时天气雷达默认资料代码为：标准格式的雷达全体扫基数据[RADA_CHN_DOR_L2_FILE_TAB] （RADA_L2_VOSC_ST）
+    dataCodeRadarWeather: RADA_L2_VOSC_ST
+    dataCodeRadarWindProfile: UPAR_WPR_AVG_1h
+    dataCodeThunder: UPAR_LIGHT_ADTD_MUL
+    dataCodeCldas1km: NAFP_PRODUCT_FILE_1KM
+    dataCodeGrapes3km: SEVP_WEFC_3KM
+    #    查询的结果集
+    elementsAtstation: STATION_NAME,PROVINCE,CITY,CNTY,DATETIME,STATION_ID_C,STATION_ID_D,LAT,LON,ALTI,STATION_LEVL,ADMIN_CODE_CHN,GST,PRE,PRE_1H,PRS,RHU,SCO,TEM,VIS,WIN_D_S_MAX,WIN_S_MAX
+    elementsSatellite: FILE_NAME,FORMAT,FILE_SIZE,FILE_URL,DATETIME,FILETIME,DATA_LEVL,BUL_CENTER,SATE_NAME,SATE_SENSOR,DATA_AREA,PROD_ID,SATE_SENSOR_CHANL,PROJ_TYPE,SPAC_DPI,D_FILE_SAVE_HIERARCHY,D_SOURCE_ID,D_FILE_ID
+    elementsRadarWeather: FILE_NAME,FORMAT,FILE_SIZE,FILE_URL,DATETIME,PROVINCE,CITY,CNTY,STATION_ID_C,RADA_MODEL,PROD_TYPE_RADA,D_FILE_SAVE_HIERARCHY,D_SOURCE_ID,D_FILE_ID,ELEV
+    elementsRadarWindProfile: FILE_NAME,FORMAT,FILE_SIZE,FILE_URL,DATETIME,PROVINCE,CITY,CNTY,STATION_ID_C,RADA_MODEL,D_FILE_SAVE_HIERARCHY,D_SOURCE_ID,D_FILE_ID
+    elementsThunder: DATETIME,LAT,MSECOND,LAYER_NUM,LON,LIT_CURRENT,MARS_3,POIS_ERR,POIS_TYPE,LIT_PROV,LIT_CITY,LIT_CNTY
+    elementsCldas1km: Datetime,FILE_SIZE,FILE_URL,Bul_Center,PROD_CATE,PROD_SYS,PROD_CONT,Data_Area,PROD_PARA1,PROD_PARA2,V40410_3,FORMAT,MAKETIME,FILE_NAME,V_FNTIME,Validtime_C,V_INTERVAL,D_FILE_SAVE_HIERARCHY,D_SOURCE_ID
+    elementsGrapes3km: D_FILE_ID,Datetime,FILE_SIZE,FILE_URL,Bul_Center,MAKETIME,PROD_CATE,PROD_SYS,PROD_CONT,Data_Area,PROD_PARA1,PROD_PARA2,V40410_3,V_FNTIME,Validtime_C,V_INTERVAL,FORMAT,FILE_NAME,V_RETAIN1_C,RETAIN2_C,V_RETAIN3_C,D_FILE_SAVE_HIERARCHY,D_SOURCE_ID
+    fcstEles: PRE,PRS,QAIR,TAIR,UWIN,VWIN,WIND
+    limitCnt: 100000
+    minStaId: 1000
+    maxStaId: 9000
+    orderBy:
+    staLevels:
+    eleValueRanges:
+    adminCodes: 510100
+    timeRange:
+    staTypes:
+    #      暂时站点只写天气雷达一个，剩余的都在 commonTable 下获取即可
+    staIdRadarWeather: Z9280
+    #    104.07,30.67
+    minLon: 102.54
+    maxLon: 104.53
+    minLat: 30.05
+    maxLat: 31.26
+    denominator: 500
+
+
+
+
+
+
+

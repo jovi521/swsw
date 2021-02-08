@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.api.SysApiMapper">
+    <resultMap id="sysApiMap" type="com.cdyw.swsw.common.domain.entity.api.SysApi">
+        <id column="api_id" property="apiId"/>
+        <result column="api_name" property="apiName"/>
+        <result column="api_url" property="apiUrl"/>
+        <result column="api_method" property="apiMethod"/>
+        <result column="pid" property="pid"/>
+        <result column="description" property="description"/>
+    </resultMap>
+    <select id="getApiUrlByUserid" resultMap="sysApiMap">
+        select d.*
+        from sys_api_table d,
+             (select a.*
+              from sys_api_table a
+                       left JOIN sys_role_api_table b
+                                 on a.api_id = b.api_id
+                       LEFT JOIN sys_role_user_table c
+                                 on b.role_id = c.role_id
+              where c.user_id = #{userId}) as tem
+        where d.pid = tem.api_id
+        UNION
+        select a.*
+        from sys_api_table a
+                 left JOIN sys_role_api_table b
+                           on a.api_id = b.api_id
+                 LEFT JOIN sys_role_user_table c
+                           on b.role_id = c.role_id
+        where c.user_id = #{userId}
+    </select>
+
+    <select id="getApiUrlByRoleid" resultMap="sysApiMap">
+        select a.*
+        from sys_api_table a
+                 left JOIN sys_role_api_table b
+                           on a.api_id = b.api_id
+        where b.role_id = #{roleId}
+    </select>
+
+    <select id="getApiUrlByPid" resultMap="sysApiMap">
+        SELECT b.*
+        FROM sys_api_table b
+        where b.api_id = #{pid}
+        union
+        select a.*
+        from sys_api_table a
+        where a.pid = #{pid}
+    </select>
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.menu.SysDiymodeMapper">
+    <select id="selectDiymode" resultType="map">
+        select ud.num, d.name, d.contain_id containId, d.is_open isOpen, d.is_shortcut isShortcut
+        from sys_user_diymode_table ud
+                 LEFT JOIN sys_diymode d
+                           on d.mode_id = ud.mode_id
+        where ud.user_id = #{userId}
+        ORDER BY num;
+    </select>
+
+    <insert id="insertDiymode" useGeneratedKeys="true" keyProperty="diymode.modeId">
+        insert into sys_diymode(name, contain_id, is_open, is_shortcut)
+        values (#{diymode.name}, #{containId}, #{diymode.idOpen}, #{diymode.isShortcut})
+    </insert>
+
+
+    <update id="updateByUseridAndNum">
+        update sys_user_diymode_table
+        set mode_id = #{modeId}
+        where user_id = #{userId}
+          and num = #{num}
+    </update>
+
+    <insert id="insertByUserid">
+        insert into sys_user_diymode_table
+        values (#{userId}, #{modeId}, #{num})
+    </insert>
+
+    <select id="selectNumByUserid" resultType="map">
+        select case when MAX(num) is null then 0 else max(num) + 1 end num
+        from sys_user_diymode_table
+        where user_id = #{userId}
+    </select>
+</mapper>

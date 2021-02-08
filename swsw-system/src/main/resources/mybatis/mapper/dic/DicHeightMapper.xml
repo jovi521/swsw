@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicHeightMapper">
+    <select id="selectAllHeight" resultType="HashMap">
+        select heightvalue, parent_code
+        from dic_height
+        <where>
+            <if test="productCode != null">
+                and product_code = #{productCode}
+            </if>
+            <if test="parentCode != null">
+                and parent_code = #{parentCode}
+            </if>
+        </where>
+    </select>
+</mapper>

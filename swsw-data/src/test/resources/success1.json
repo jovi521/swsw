@@ -1,0 +1,33 @@
+{
+  "requestTime": "2020-05-25 02:30:01",
+  "returnCode": "0",
+  "responseTime": "2020-05-25 02:30:01",
+  "takeTime": 0.34,
+  "fieldNames": "站名  地市  区县  资料时间  区站号(字符)  区站号(数字)  纬度  经度  测站高度  地面温度  降水量  过去1小时降水量  气压  相对湿度  温度/气温  水汽压  瞬时风向  瞬时风速",
+  "returnMessage": "Query Succeed",
+  "colCount": 18,
+  "requestParams": "interfaceId=getSurfEleByTimeRangeAndStaIDRange&dataCode=SURF_CHN_MUL_HOR&elements=Station_Name,City,Cnty,Datetime,Station_Id_C,Station_Id_d,Lat,Lon,Alti, GST[地面温度], PRE[降水量], PRE[降水量]_1h, PRS[气压], RHU[相对湿度], TEM[温度/气温], VAP[水汽压], WIN_D_INST[瞬时风向], WIN_S_INST[瞬时风速]&limitCnt=30&minStaId=1000&maxStaId=9000&timeRange=[20200423000000,20200524020000]&isTest=T",
+  "rowCount": 30,
+  "DS": [
+    {
+      "STATION_NAME": "彭州",
+      "CITY": "成都市",
+      "CNTY": "彭州",
+      "DATETIME": "2020-05-01 19:00:00",
+      "STATION_ID_C": "56189",
+      "STATION_ID_D": 56189,
+      "LAT": 30.9833,
+      "LON": 103.9333,
+      "ALTI": 581.7,
+      "GST": 16.2,
+      "PRE": 0,
+      "PRE_1H": 0,
+      "PRS": 940.5,
+      "RHU": 53,
+      "TEM": 18.2,
+      "VAP": 11.1,
+      "WIN_D_INST": 14,
+      "WIN_S_INST": 0.5
+    }
+  ]
+}

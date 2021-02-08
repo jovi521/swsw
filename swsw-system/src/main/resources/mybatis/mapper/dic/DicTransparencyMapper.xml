@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicTransparencyMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicTransparency">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="trans_value" jdbcType="INTEGER" property="transValue"/>
+        <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
+        <result column="station_code" jdbcType="VARCHAR" property="stationCode"/>
+        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from dic_transparency
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicTransparency">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into dic_transparency (trans_value, product_code, station_code,
+        parent_code)
+        values (#{value,jdbcType=INTEGER}, #{productCode,jdbcType=VARCHAR}, #{stationCode,jdbcType=VARCHAR},
+        #{parentCode,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicTransparency">
+        update dic_transparency
+        set trans_value  = #{value,jdbcType=INTEGER},
+            product_code = #{productCode,jdbcType=VARCHAR},
+            station_code = #{stationCode,jdbcType=VARCHAR},
+            parent_code  = #{parentCode,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, trans_value, product_code, station_code, parent_code
+        from dic_transparency
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select trans_value, product_code, parent_code
+        from dic_transparency
+    </select>
+</mapper>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.atstation.AtstationMapper">
+    <sql id="alltype">
+        case when tem > 10000 then '' else tem end as tem,
+        case when prs > 10000 then '' else prs end as prs,
+        case when rhu > 10000 then '' else rhu end as rhu,
+        case when win_s_max > 10000 then '' else win_s_max end as win_s_max,
+        case when win_d_s_max > 10000 then '' else win_d_s_max end as win_d_s_max,
+        case when pre_1h > 10000 then '' else pre_1h end as pre_1h,
+        case when pre_10min > 10000 then '' else pre_10min end as pre_10min,
+        case when vis > 100000 then '' else vis end as vis,
+    </sql>
+
+    <select id="getDataByTypeAndTime" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            date_time, station_name, station_id_c, lon, lat,
+            <choose>
+                <when test="type == null">
+                    <include refid="alltype">
+                    </include>
+                </when>
+                <when test="type == 603">
+                    tem,
+                </when>
+                <when test="type == 602">
+                    prs,
+                </when>
+                <when test="type == 601">
+                    rhu,
+                </when>
+                <when test="type == 607 | type == 608">
+                    win_s_max, win_d_s_max,
+                </when>
+                <when test="type == 605">
+                    pre_1h,
+                </when>
+                <when test="type == 604">
+                    pre_10min,
+                </when>
+                <when test="type == 606">
+                    vis,
+                </when>
+                <otherwise>
+                    id,
+                </otherwise>
+            </choose>
+        </trim>
+        from ${tableName}
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="startTime != null">
+                and date_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and date_time &lt;= #{endTime}
+            </if>
+        </trim>
+        order by id
+    </select>
+
+    <select id="getDataByTypeAndTimestamp" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            b.date_time, b.station_name, b.station_id_c, b.lon, b.lat, l.station_level,
+            <choose>
+                <when test="type == null">
+                    <include refid="alltype">
+                    </include>
+                </when>
+                <when test="type == 603">
+                    b.tem,
+                </when>
+                <when test="type == 602">
+                    b.prs,
+                </when>
+                <when test="type == 601">
+                    b.rhu,
+                </when>
+                <when test="type == 607 | type == 608">
+                    b.win_s_max, b.win_d_s_max,
+                </when>
+                <when test="type == 605">
+                    b.pre_1h,
+                </when>
+                <when test="type == 604">
+                    b.pre_10min,
+                </when>
+                <when test="type == 606">
+                    b.vis,
+                </when>
+                <otherwise>
+                    b.id,
+                </otherwise>
+            </choose>
+        </trim>
+        from ${tableName} b
+        LEFT JOIN
+        dic_lonlat l
+        on b.station_id_c = l.code
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="startTime != null">
+                and b.date_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and b.date_time &lt;= #{endTime}
+            </if>
+            and l.station_level > 0
+        </trim>
+        order by l.station_level
+    </select>
+
+    <select id="getDataParseByTypeAndTime" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            distinct `name`,
+        </trim>
+        from ${tableName} as ds
+        right join (
+        <trim prefix="select" suffixOverrides=",">
+            Max( id ) as maxID, MAX( `time` ),
+        </trim>
+        from ${tableName}
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="startTime != null">
+                and `time` >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt;= #{endTime}
+            </if>
+        </trim>
+        ) as temp on temp.maxID = ds.id
+    </select>
+
+    <select id="selectExtremevalue" resultType="HashMap">
+        select
+        max(tem) max_tem, min(tem) min_tem, max(win_s_max) max_win,
+        max(pre_1h) max_pre
+        from(
+        select
+        case when tem > 10000 then '-' else round(tem,1) end as tem,
+        case when prs > 10000 then '-' else round(prs,1) end as prs,
+        case when rhu > 10000 then '-' else round(rhu,1) end as rhu,
+        case when win_s_max > 10000 then '-' else round(win_s_max,1) end as win_s_max,
+        case when win_d_s_max > 10000 then '-' else round(win_d_s_max,1) end as win_d_s_max,
+        case when pre_1h > 10000 then '-' else round(pre_1h,1) end as pre_1h,
+        case when pre_10min > 10000 then '-' else round(pre_10min,1) end as pre_10min,
+        case when vis > 100000 then '-' else round(vis,1) end as vis
+        from ${table1}
+        where `timestamp` &gt;= #{startTime} and `timestamp` &lt;= #{endTime} and station_id_c = #{stationId}
+        <if test="table2 != null">
+            union all
+            select
+            case when tem > 10000 then '-' else round(tem,1) end as tem,
+            case when prs > 10000 then '-' else round(prs,1) end as prs,
+            case when rhu > 10000 then '-' else round(rhu,1) end as rhu,
+            case when win_s_max > 10000 then '-' else round(win_s_max,1) end as win_s_max,
+            case when win_d_s_max > 10000 then '-' else round(win_d_s_max,1) end as win_d_s_max,
+            case when pre_1h > 10000 then '-' else round(pre_1h,1) end as pre_1h,
+            case when pre_10min > 10000 then '-' else round(pre_10min,1) end as pre_10min,
+            case when vis > 100000 then '-' else round(vis,1) end as vis
+            from ${table2}
+            where `timestamp` &gt;= #{startTime} and `timestamp` &lt;= #{endTime} and station_id_c = #{stationId}) as
+            temp
+        </if>
+        <if test="table2 == null">
+            ) as temp
+        </if>
+    </select>
+
+    <select id="selectAllProduct" resultType="HashMap">
+        select
+        case when tem > 10000 then '-' else round(tem,1) end as tem,
+        case when prs > 10000 then '-' else round(prs,1) end as prs,
+        case when rhu > 10000 then '-' else round(rhu,1) end as rhu,
+        case when win_s_max > 10000 then '-' else round(win_s_max,1) end as win_s_max,
+        case when win_d_s_max > 10000 then '-' else round(win_d_s_max,1) end as win_d_s_max,
+        case when pre_1h > 10000 then '-' else round(pre_1h,1) end as pre_1h,
+        case when pre_10min > 10000 then '-' else round(pre_10min,1) end as pre_10min,
+        case when vis > 100000 then '-' else round(vis,1) end as vis,
+        date_time, timestamp
+        from ${table1}
+        where `timestamp` &gt;= #{startTime} and `timestamp` &lt;= #{endTime} and station_id_c = #{stationId}
+        <if test="table2 != null">
+            union all
+            select
+            case when tem > 10000 then '-' else round(tem,1) end as tem,
+            case when prs > 10000 then '-' else round(prs,1) end as prs,
+            case when rhu > 10000 then '-' else round(rhu,1) end as rhu,
+            case when win_s_max > 10000 then '-' else round(win_s_max,1) end as win_s_max,
+            case when win_d_s_max > 10000 then '-' else round(win_d_s_max,1) end as win_d_s_max,
+            case when pre_1h > 10000 then '-' else round(pre_1h,1) end as pre_1h,
+            case when pre_10min > 10000 then '-' else round(pre_10min,1) end as pre_10min,
+            case when vis > 100000 then '-' else round(vis,1) end as vis,
+            date_time, timestamp
+            from ${table2}
+            where `timestamp` &gt;= #{startTime} and `timestamp` &lt;= #{endTime} and station_id_c = #{stationId} ORDER
+            BY date_time
+        </if>
+    </select>
+</mapper>

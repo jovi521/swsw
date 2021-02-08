@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 引入外部资源文件 -->
+    <!--<properties resource="jdbc.properties"></properties>-->
+    <!-- 设置驼峰匹配 -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <!-- 设置包扫描(别名)居然还有顺序！！！ -->
+    <typeAliases>
+        <typeAlias type="com.cdyw.swsw.common.domain.entity.atstation.Atstation" alias="tstation"/>
+        <typeAlias type="com.cdyw.swsw.common.domain.entity.satellite.Satellite" alias="satellite"/>
+
+        <package name="com.cdyw.swsw.common.domain.entity"/>
+    </typeAliases>
+    <!-- 配置环境：可以配置多个环境，default：配置某一个环境的唯一标识，表示默认使用哪个环境 -->
+    <!--<environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                &lt;!&ndash; 配置连接信息 &ndash;&gt;
+                <property name="driver" value="${jdbc.driverClass}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>-->
+    <!-- 配置映射文件：用来配置sql语句和结果集类型等 -->
+    <mappers>
+        <mapper resource="mybatis/mapper/satellite/SatelliteMapper.xml"/>
+    </mappers>
+</configuration>

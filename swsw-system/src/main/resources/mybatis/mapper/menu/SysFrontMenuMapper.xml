@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.menu.SysFrontMenuMapper">
+    <select id="insertMenu">
+        insert into sys_frontmenu(menu_code, name, id, produce_type, is_open, comname, measure, type, parent_code)
+        values (#{menuId}, #{frontMenu.name}, #{frontMenu.id}, #{frontMenu.produceType}, #{frontMenu.isOpen},
+                #{frontMenu.comname},
+                #{frontMenu.measure}, #{frontMenu.type}, #{frontMenu.parentCode})
+    </select>
+
+    <select id="selectFrontMenu" resultType="map">
+        select
+        case when c.name is null then '' else c.name end as name,
+        case when c.id is null then null else c.id end as id,
+        case when c.produce_type is null then '' else c.produce_type end as produceType,
+        is_open isOpen,
+        case when c.comname is null then '' else c.comname end as comname,
+        case when c.type is null then '' else c.type end as type,
+        case when c.parent_code is null then 0 else c.parent_code end as parentCode,
+        case when c.measure is null then '' else c.measure end as measure,
+        (select d.name from sys_frontmenu d where d.menu_code = c.parent_menu_code) as parent_name
+        from sys_frontmenu c
+        <where>
+            c.parent_menu_code in
+            (select menu_code from sys_frontmenu where parent_code is NULL);
+        </where>
+    </select>
+</mapper>

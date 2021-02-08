@@ -1,0 +1,39 @@
+http://10.194.130.41:10000/cimiss-web/api
+?dataFormat=json
+&interfaceId=getRadaFileByTimeRangeAndStaId
+&dataCode=RADA_L2_ELEV_ST(标准格式的雷达逐仰角基数据-目前没数据)
+&dataCode=RADA_L3_PUP_CREF(雷达单站PUP产品-组合反射率-目前有数据。总之以后所有产品都需要入库)
+&elements=Station_Name,Province,City,Cnty,Datetime,D_FILE_SAVE_HIERARCHY,FILE_URL,FILE_SIZE,Station_Id_C,ARCHIVE_FLAG,PACKAGE_FLAG,FORMAT,FILE_NAME,RADA_MODEL,Year,Mon,SCANNING_MODE,Day,Elev,Hour,V21256,Min,Second,FILE_NAME_ORIG,D_SOURCE_ID,D_FILE_ID,DUANXIN_STATION_NAME,GONGFU_STATION_NAME,HUITU_STATION_NAME
+&limitCnt=30
+&userId=zdc
+&pwd=0b378c4f890f52055cb340edf238857d2fc51833ad2cbfd5b0ee14c394fd67d0
+&staIds=Z9280
+&timeRange=[20190611000000,20200611010000]
+
+{
+	" FILE_NAME[文件名]": "Z_RADR_I_Z9280_20191225113025_P_DOR_SC_CR_40X40_460_NUL.280.bin",
+	" FORMAT[文件格式]": "bin",
+	" FILE_SIZE[文件大小]": 18504,
+	" FILE_URL[存储路径]": "http://10.194.130.40:8888/WRSS/data/ftpfile.svt?url=L0NNQURBQVMvREFUQS9SQURBL0RPUi9MMy9QVVAvMjAxOS8yMDE5MTIyNS9aOTI4MC9DUi9aX1JBRFJfSV9aOTI4MF8yMDE5MTIyNTExMzAyNV9QX0RPUl9TQ19DUl80MFg0MF80NjBfTlVMLjI4MC5iaW4=",
+	"Station_Name[站名]": "成都国家天气雷达站",
+	" Province[省份]": "四川",
+	" City[地市]": "成都市",
+	" Cnty[区县]": "青羊区",
+	" Datetime[资料时间]": "2019-12-25 11:30:25",
+	" D_FILE_ID[文件标识]": "Z_RADR_I_Z9280_20191225113025_P_DOR_SC_CR_40X40_460_NUL.280.bin",
+	" Station_Id_C[区站号(字符)]": "Z9280",
+	" V_FNTIME[资料时间（字符型）]": "20191225113025",
+	" RADA_MODEL[雷达型号]": "SC",
+	" PROD_Type_RADA[产品类型标识符]": "CR",
+	" DPI[分辨率]": "40X40",
+	" V_COVERING_AREA[覆盖范围]": "460",
+	" Elev[仰角]": null,
+	" D_FILE_SAVE_HIERARCHY[存储状态]": 0,
+	" D_SOURCE_ID[数据来源]": "J.0003.0003.R002",
+	" V_RETAIN1_C[保留字段1]": "",
+	" RETAIN2_C[保留字段2（模式中表示实时/分析）]": "",
+	" V_RETAIN3_C[保留字段3]": "",
+	"DUANXIN_Station_Name[站名]": null,
+	"GONGFU_Station_Name[站名]": null,
+	"HUITU_Station_Name[站名]": null
+}

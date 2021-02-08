@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.common.ComCreateTableMapper">
+    <!-- 通用日志表字段 -->
+    <sql id="commonLogField">
+        (`id` int (11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+        `create_time` datetime (0) NULL DEFAULT NULL COMMENT '创建时间',
+        `date_time` datetime (0) NULL DEFAULT NULL COMMENT '最后更新的资料时间',
+        `type` int (11) DEFAULT NULL COMMENT '一级大类类型',
+        `status` int (11) DEFAULT NULL COMMENT '插入状态：0 失败，1 成功',
+        `msg` varchar (500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '详细信息',
+    </sql>
+    <!-- 通用字段sql -->
+    <sql id="commonField">
+        (`id` int (11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+        `name` varchar (100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件名',
+        `pos_file` varchar (100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件路径',
+        `file_size` int (11) DEFAULT NULL COMMENT '文件大小',
+        `pos_picture` varchar (100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件图片',
+        `type` int (11) DEFAULT NULL COMMENT '文件类型',
+        `radarcd` varchar (50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件站号',
+        `time` bigint (20) DEFAULT NULL COMMENT '文件时间',
+        `layer` int (11) DEFAULT NULL COMMENT '层数',
+        `mcode` varchar (50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '标识码',
+        `create_time` bigint (20) DEFAULT NULL COMMENT '文件创建时间',
+        `modify_type` int (11) DEFAULT NULL COMMENT '文件订正状态：0未订正，1面订正，2点订正，3锁定',
+    </sql>
+    <!-- 通用配置sql -->
+    <sql id="commonConfig">
+        PRIMARY KEY (id) )
+        ENGINE = MyISAM
+        AUTO_INCREMENT = 1
+        CHARACTER SET
+        = utf8mb4
+        COLLATE = utf8mb4_general_ci
+        ROW_FORMAT = Dynamic
+    </sql>
+    <!-- 通用字段(自动站和短临)sql -->
+    <sql id="commonFieldAtAndShortAndSatel">
+        `lon_min` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '最小经度',
+        `lon_max` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '最大经度',
+        `lat_min` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '最小纬度',
+        `lat_max` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '最大纬度',
+        `file_dir` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件路径',
+        `file_name` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件名',
+    </sql>
+    <!-- 通用字段(天气雷达和相控阵雷达)sql -->
+    <sql id="commonFieldRadar">
+        `file_name` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件名',
+        `product_id` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品id',
+        `product_name` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品名称',
+        `start_time` varchar(50) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '开始时间',
+        `end_time` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '结束时间',
+        `station_no` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '站点编号',
+        `station_name` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '站点名称',
+        `radar_coor` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+        `max_dis` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+        `height` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '高度',
+        `projection` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+        `left_bottom_coor` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+        `right_top_coor` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+        `width_height` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+        `radar_pos` varchar(100) CHARACTER
+        SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '',
+    </sql>
+
+    <!-- 日志表创建通用SQL -->
+    <update id="createLog" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonLogField"/>
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 文件表创建通用SQL -->
+    <update id="createFileEntity" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 自动站 base 表定制化SQL -->
+    <update id="createAtStationBase" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        `date_time` datetime(0) NULL DEFAULT NULL COMMENT '资料时间',
+        `station_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '站名',
+        `station_id_c` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '区站号(字符)',
+        `station_id_d` int(6) NULL DEFAULT NULL COMMENT '区站号(数字)',
+        `province` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '省份',
+        `city` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '地市',
+        `cnty` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '区县',
+        `admin_code_chn` int(6) NULL DEFAULT NULL COMMENT '行政区代码',
+        `lon` float(10, 4) NULL DEFAULT NULL COMMENT '经度',
+        `lat` float(10, 4) NULL DEFAULT NULL COMMENT '纬度',
+        `alti` float(10, 4) NULL DEFAULT NULL COMMENT '测站高度',
+        `station_levl` int(6) NULL DEFAULT NULL COMMENT '测站级别',
+        `gst` float(10, 4) NULL DEFAULT NULL COMMENT '地面温度',
+        `pre` float(10, 4) NULL DEFAULT NULL COMMENT '降水量(/毫米)',
+        `pre_1h` float(10, 4) NULL DEFAULT NULL COMMENT '过去1小时降水量(/毫米)',
+        `pre_10min` float(10, 4) NULL DEFAULT NULL COMMENT '过去10分钟降水量(/毫米)',
+        `prs` float(10, 4) NULL DEFAULT NULL COMMENT '气压(百帕)',
+        `rhu` float(10, 4) NULL DEFAULT NULL COMMENT '相对湿度(%)',
+        `tem` float(10, 4) NULL DEFAULT NULL COMMENT '气温(摄氏度)',
+        `win_s_max` float(10, 4) NULL DEFAULT NULL COMMENT '最大风速(/米/秒)',
+        `win_d_s_max` float(10, 4) NULL DEFAULT NULL COMMENT '最大风速的风向(/度)',
+        `vis` float(10, 4) NULL DEFAULT NULL COMMENT '水平能见度(人工)/米',
+        `timestamp` bigint (20) DEFAULT NULL COMMENT '文件时间戳',
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 自动站 parse 表定制化SQL -->
+    <update id="createAtStationParse" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        <include refid="commonFieldAtAndShortAndSatel"/>
+        `start_time` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '开始时间',
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 天气雷达和相控阵雷达 parse 表定制化SQL -->
+    <update id="createRadarParse" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        <include refid="commonFieldRadar"/>
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 卫星 parse 表定制化SQL -->
+    <update id="createSatelliteParse" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        <include refid="commonFieldAtAndShortAndSatel"/>
+        `start_time` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '开始时间',
+        `end_time` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '结束时间',
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 0-2小时和0-12小时融合数据表定制化SQL -->
+    <update id="createFusion" parameterType="string">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        `forecast_time` bigint (20) DEFAULT NULL COMMENT '文件预报时间',
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <!-- 0-12小时融合数据整体订正状态表定制化SQL -->
+    <update id="createFusionBaseTime">
+        CREATE TABLE IF NOT EXISTS data_fusion12h_basetime
+        (`id` int (11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+        `base_time` bigint (20) DEFAULT NULL COMMENT '文件起报时间',
+        `modified_type` int (10) DEFAULT NULL COMMENT '文件订正状态：0-未订正，1-面订正，2-点订正，3-锁定订正',
+        <include refid="commonConfig"/>
+        COMMENT = '融合12小时数据整体起报时间和订正状态表'
+    </update>
+    <!-- cldas1km parse -->
+    <update id="createCldas1kmParse">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        <include refid="commonField"/>
+        `lon_max` float(10, 4) NULL DEFAULT NULL COMMENT '最大经度',
+        `lat_min` float(10, 4) NULL DEFAULT NULL COMMENT '最小纬度',
+        `lat_max` float(10, 4) NULL DEFAULT NULL COMMENT '最大纬度',
+        `lon_min` float(10, 4) NULL DEFAULT NULL COMMENT '最小经度',
+        <include refid="commonConfig"/>
+        COMMENT =
+        <trim prefix="'" suffix="'">
+            ${tableComment}
+        </trim>
+    </update>
+    <update id="createFusionWeatherInformation">
+        CREATE TABLE IF NOT EXISTS data_fusion12h_weather_information
+        (`id` int (11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+        `weather_type` varchar (50) DEFAULT NULL COMMENT '天气类型：晴天、阴天、雨天（云量）',
+        `wind` varchar (50) DEFAULT NULL COMMENT '风场',
+        `forecast_count` int (10) DEFAULT NULL COMMENT '文件预报时次',
+        `forecast_time` bigint (20) DEFAULT NULL COMMENT '文件预报时间',
+        `base_time` bigint (20) DEFAULT NULL COMMENT '文件起报时间',
+        <include refid="commonConfig"/>
+        COMMENT = '融合12小时数据天气信息表'
+    </update>
+</mapper>

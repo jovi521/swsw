@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "application.file.monitor.basePath",
+      "type": "java.lang.String",
+      "description": "Description for application.file.monitor.basePath."
+    },
+    {
+      "name": "application.file.monitor.parsePath",
+      "type": "java.lang.String",
+      "description": "Description for application.file.monitor.parsePath."
+    }
+  ]
+}

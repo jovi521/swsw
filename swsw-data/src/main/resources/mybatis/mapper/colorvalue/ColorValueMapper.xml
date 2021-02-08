@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.colorvalue.ColorValueMapper">
+    <select id="getByType" resultType="HashMap">
+        select * from color_info
+        <where>
+            type = #{type}
+        </where>
+        order by criticalvalue
+    </select>
+
+    <insert id="insert">
+        insert into color_info(type, criticalvalue, colorvalue)
+        values (#{type}, #{criticalvalue}, #{colorvalue})
+    </insert>
+
+    <insert id="insert2">
+        insert into dic_color(product_code, criticalvalue, colorvalue, station_code, parent_code)
+        values (#{type}, #{criticalvalue}, #{colorvalue}, #{station_code}, #{parent_code})
+    </insert>
+</mapper>

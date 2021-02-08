@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.user.SysRoleTableMapper">
+    <select id="getRolesByUserName" resultType="string">
+        SELECT b.role_name
+        from sys_user_table a,
+        sys_role_table b,
+        sys_role_user_table c
+        where a.user_id = c.user_id
+        and b.role_id = c.role_id
+        and a.state = 1
+        <if test="userName != null and userName != ''">
+            and a.user_name = #{userName}
+        </if>
+    </select>
+</mapper>

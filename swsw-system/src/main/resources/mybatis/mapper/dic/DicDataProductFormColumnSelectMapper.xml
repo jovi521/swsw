@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicDataProductFormColumnSelectMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicDataProductFormColumnSelect">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="column_id" jdbcType="INTEGER" property="columnId"/>
+        <result column="column_select" jdbcType="VARCHAR" property="columnSelect"/>
+        <result column="column_stadium_select" jdbcType="VARCHAR" property="columnStadiumSelect"/>
+        <result column="select_flag" jdbcType="VARCHAR" property="selectFlag"/>
+    </resultMap>
+
+    <select id="selectByColumnId" resultMap="BaseResultMap" parameterType="string">
+        SELECT *
+        from dic_data_product_form_column_select
+        WHERE column_id = #{columnId}
+    </select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicPathMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicPath">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from dic_path
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicPath">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into dic_path (`path`, `level`, parent_code
+        )
+        values (#{path,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{parentCode,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicPath">
+        update dic_path
+        set `path`      = #{path,jdbcType=VARCHAR},
+            `level`     = #{level,jdbcType=INTEGER},
+            parent_code = #{parentCode,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, `path`, `level`, parent_code
+        from dic_path
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, `path`, `level`, parent_code
+        from dic_path
+    </select>
+</mapper>

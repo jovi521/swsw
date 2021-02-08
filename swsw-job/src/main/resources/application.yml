@@ -1,0 +1,97 @@
+server:
+  shutdown: immediate
+  servlet:
+    context-path: /swswjob
+#自定义的健康信息，使用@Message@取得的是maven中的配置信息
+info:
+  groupId: @project.groupId@
+  artifactId: @project.artifactId@
+  version: @project.version@
+# actuator
+management:
+  health:
+    mail:
+      enabled: off
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      # CORS跨域支持
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET,POST
+  #health端点的访问权限
+  endpoint:
+    health:
+      #选择展示
+      show-details: always
+spring:
+  application:
+    name: swsw-job
+  profiles:
+    active: @spring.profiles.active@
+  boot:
+    admin:
+      client:
+        enabled: on
+        url: http://127.0.0.1:8085/swswadmin
+        instance:
+          prefer-ip: on
+          #元数据，用于配置monitor server访问client端的凭证
+          metadata:
+            user.name: user
+            user.password: 123456
+          service-base-url: http://127.0.0.1:8087
+        #client可以连接到monitor server端的凭证
+        username: admin
+        password: 123456
+  mvc:
+    servlet:
+      load-on-startup: 0
+    static-path-pattern: /static/**
+  resources:
+    static-locations: classpath:/static/
+  # xxl-job, email
+  mail:
+    host: smtp.qq.com
+    protocol: smtp
+    port: 465
+    username: 506997994@qq.com
+    from: 506997994@qq.com
+    password: czfhfypfofabbjbh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+          socketFactoryssl:
+            eclass: javax.net.ssl.SSLSocketFactory
+  # freemarker
+  freemarker:
+    templateLoaderPath: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
+    request-context-attribute: request
+    settings:
+      number_format: 0.##########
+# mybatis
+mybatis:
+  mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
+  #mybatis.type-aliases-package=com.cdyw.swsw.job.admin.core.model
+xxl:
+  job:
+    accessToken:
+    # xxl-job, i18n (default is zh_CN, and you can choose "zh_CN", "zh_TC" and "en")
+    i18n: zh_CN
+    triggerpool:
+      fast:
+        max: 200
+      slow:
+        max: 100
+    # xxl-job, log retention days
+    logretentiondays: 30
+

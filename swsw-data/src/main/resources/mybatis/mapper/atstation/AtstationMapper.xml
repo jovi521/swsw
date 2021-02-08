@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.atstation.AtstationMapper">
+    <resultMap id="AtstationParseMap" type="com.cdyw.swsw.common.domain.ao.txt.AtstationParseTxt">
+        <id property="id" column="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_type" property="modifyType"/>
+        <result column="lon_min" property="lonMin"/>
+        <result column="lon_max" property="lonMax"/>
+        <result column="lat_min" property="latMin"/>
+        <result column="lat_max" property="latMax"/>
+        <result column="file_dir" property="startTime"/>
+        <result column="file_name" property="fileDir"/>
+        <result column="start_time" property="fileName"/>
+    </resultMap>
+
+    <resultMap id="AtstationBaseMap" type="com.cdyw.swsw.common.domain.entity.atstation.Atstation">
+        <id property="id" column="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="modify_type" property="modifyType"/>
+        <result property="createTime" column="create_time"/>
+        <result property="dateTime" column="date_time"/>
+        <result property="stationName" column="station_name"/>
+        <result property="stationIdC" column="station_id_c"/>
+        <result property="stationIdD" column="station_id_d"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="cnty" column="cnty"/>
+        <result property="adminCodeChn" column="admin_code_chn"/>
+        <result property="lon" column="lon"/>
+        <result property="lat" column="lat"/>
+        <result property="alti" column="alti"/>
+        <result property="stationLevl" column="station_levl"/>
+        <result property="gst" column="gst"/>
+        <result property="pre" column="pre"/>
+        <result property="pre1h" column="pre_1h"/>
+        <result property="pre10min" column="pre_10min"/>
+        <result property="prs" column="prs"/>
+        <result property="rhu" column="rhu"/>
+        <result property="tem" column="tem"/>
+        <result property="winSmax" column="win_s_max"/>
+        <result property="winDsmax" column="win_d_s_max"/>
+        <result property="vis" column="vis"/>
+    </resultMap>
+
+    <!-- 通用新增字段 -->
+    <sql id="comFiledInsert">
+        name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type,
+    </sql>
+    <!-- 通用新增字段值 -->
+    <sql id="comFiledValueInsert">
+        #{ats.name},
+        #{ats.posFile},
+        #{ats.fileSize},
+        #{ats.type},
+        #{ats.radarcd},
+        #{ats.time},
+        #{ats.layer},
+        #{ats.mcode},
+        unix_timestamp(now()),
+        #{ats.modifyType},
+    </sql>
+    <!-- 新增 base 表字段 -->
+    <sql id="atsFiledInsertBase">
+        <include refid="comFiledInsert"/>
+        date_time, station_name, station_id_c, station_id_d, province, city, cnty, admin_code_chn, lon,
+        lat, alti, station_levl, gst, pre, pre_1h, pre_10min, prs, rhu, tem, win_s_max, win_d_s_max, vis, timestamp
+    </sql>
+    <!-- 新增 parse 表字段 -->
+    <sql id="atsFiledInsertParse">
+        <include refid="comFiledInsert"/>
+        lon_min, lon_max, lat_min, lat_max, file_dir, file_name, start_time
+    </sql>
+    <!-- 新增时候临时查询的结果 -->
+    <sql id="atsTempSelectField">
+        date_time, station_id_c
+    </sql>
+    <!-- 新增时候临时查询的条件 -->
+    <sql id="atsTempConditionField">
+        date_time =
+        #{ats.dateTime}
+        and
+        station_id_c
+        =
+        #{ats.stationIdC}
+    </sql>
+    <!-- 调用存储过程 -->
+    <insert id="createAtStationTableByName" statementType="CALLABLE">
+        #         { call createATStationTableByName()}
+    </insert>
+
+    <!-- 使用statementType="STATEMENT"，需要把 #{}改成 ${} -->
+    <insert id="insertAtStationBase" flushCache="true" statementType="PREPARED">
+        <bind name="ats" value="atstation"/>
+        insert into ${tableName}(
+        <include refid="atsFiledInsertBase"/>
+        )
+        select
+        <if test="ats != null">
+            <include refid="comFiledValueInsert"/>
+            #{ats.dateTime}, #{ats.stationName}, #{ats.stationIdC}, #{ats.stationIdD},
+            #{ats.province}, #{ats.city}, #{ats.cnty}, #{ats.adminCodeChn}, #{ats.lon},
+            #{ats.lat}, #{ats.alti}, #{ats.stationLevl}, #{ats.gst}, #{ats.pre},
+            #{ats.pre1h}, #{ats.pre10min}, #{ats.prs}, #{ats.rhu}, #{ats.tem},
+            #{ats.winSmax}, #{ats.winDsmax}, #{ats.vis}, #{ats.timestamp}
+        </if>
+        from dual where not exists
+        (select
+        <include refid="atsTempSelectField"/>
+        from ${tableName} where
+        <include refid="atsTempConditionField"/>
+        )
+    </insert>
+
+    <insert id="insertAtStationParse" flushCache="true" statementType="PREPARED">
+        <bind name="ats" value="atstationParseTxt"/>
+        insert into ${tableName}(
+        <include refid="atsFiledInsertParse"/>
+        )
+        values (
+        <if test="ats != null">
+            <include refid="comFiledValueInsert"/>
+            #{ats.lonMin}, #{ats.lonMax}, #{ats.latMin}, #{ats.latMax},
+            #{ats.startTime}, #{ats.fileDir}, #{ats.fileName}
+        </if>
+        )
+    </insert>
+
+    <select id="getSurfEleInRegionByTimeRange" resultMap="AtstationBaseMap">
+    </select>
+
+    <select id="getSurfEleByTimeRangeAndStaIDRange" resultMap="AtstationBaseMap">
+    </select>
+
+    <select id="getSurfEleByTimeRange" resultMap="AtstationBaseMap">
+    </select>
+
+    <!-- 切记mapper文件中的sql不要随便加注释，防止sql注入   AND date_time = DATE_FORMAT(#{dateTime}, '%Y-%m-%d %H:%i:%s') -->
+    <!-- resultType：实体类必须和数据库相对应。resultMap：不需要，但是必须在前面将对应字段一一写出来 -->
+    <select id="getAtsByAtsIdAndDate" resultMap="AtstationBaseMap">
+        select *
+        from ${tableName}
+        <!-- trim标签可以替代set、where等标签，overrider表示删除。prefix表示加前缀sql语句，suffix表示加后缀sql语句 -->
+        <!--<where>-->
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="stationIdD != null">
+                and station_id_d = #{stationIdD}
+            </if>
+            <if test="dateTime != null">
+                and date_time = #{dateTime}
+                and date_time >= DATE_SUB( #{dateTime}, INTERVAL 2 HOUR )
+            </if>
+        </trim>
+        <!--</where>-->
+    </select>
+
+    <select id="getAtsById" resultMap="AtstationBaseMap">
+        select *
+        from ${tableName}
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByDatetime" resultType="java.util.HashMap">
+        select ${fieldStr}
+        from ${tableName}
+        <where>
+            <if test="datetime != null">
+                date_time = #{datetime}
+                and ${typeStr} &lt; #{filterStr}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.radar.RadarPhasedArrayMapper">
+    <resultMap id="commonFileEntity" type="com.cdyw.swsw.common.domain.entity.file.FileEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_type" property="modifyType"/>
+    </resultMap>
+    <resultMap id="radarParseResultMap" type="com.cdyw.swsw.common.domain.ao.txt.CommonRadarParseTxt">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="file_name" property="fileName"/>
+        <result column="product_id" property="productID"/>
+        <result column="product_name" property="productName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="station_no" property="stationNo"/>
+        <result column="station_name" property="stationName"/>
+        <result column="radar_coor" property="radarCoor"/>
+        <result column="max_dis" property="maxDis"/>
+        <result column="height" property="height"/>
+        <result column="projection" property="projection"/>
+        <result column="left_bottom_coor" property="leftBottomCoor"/>
+        <result column="right_top_coor" property="rightTopCoor"/>
+        <result column="width_height" property="widthHeight"/>
+        <result column="radar_pos" property="radarPos"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="commonFiledSelect">
+        id, name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type
+    </sql>
+
+    <!-- 通用新增字段 -->
+    <sql id="commonFieldInsert">
+        name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type,
+    </sql>
+    <!-- 通用字段(天气雷达和相控阵雷达)sql -->
+    <sql id="commonFieldInsertRadar">
+        `file_name`, `product_id`, `product_name`, `start_time`, `end_time`,
+        `station_no`, `station_name`, `radar_coor`, `max_dis`, `height`,
+        `projection`, `left_bottom_coor`, `right_top_coor`, `width_height`, `radar_pos`
+    </sql>
+    <!-- 通用新增字段值 -->
+    <sql id="commonFieldInsertRadarValue">
+        #{file.name},
+        #{file.posFile},
+        #{file.fileSize},
+        #{file.type},
+        #{file.radarcd},
+        #{file.time},
+        #{file.layer},
+        #{file.mcode},
+        unix_timestamp(now()),
+        #{file.modifyType},
+    </sql>
+
+    <select id="selectParseByPathAndName" parameterType="java.lang.Integer" resultMap="radarParseResultMap">
+        select
+        <include refid="commonFiledSelect"/>
+        from ${tableName}
+        <where>
+            pos_file = #{path}
+            and `name` = #{name}
+        </where>
+    </select>
+
+    <insert id="insertRadarParse" flushCache="true" statementType="PREPARED">
+        <bind name="file" value="fileEntity"/>
+        <bind name="radar" value="radarParseTxt"/>
+        insert into ${tableName} (
+        <include refid="commonFieldInsert"/>
+        <include refid="commonFieldInsertRadar"/>
+        )
+        values (
+        <if test="radar != null">
+            <include refid="commonFieldInsertRadarValue"/>
+            #{file.name}, #{radar.productID}, #{radar.productName}, #{radar.startTime}, #{radar.endTime},
+            #{radar.stationNo}, #{radar.stationName},
+            #{radar.radarCoor}, #{radar.maxDis}, #{radar.height}, #{radar.projection}, #{radar.leftBottomCoor},
+            #{radar.rightTopCoor},#{radar.widthHeight},#{radar.radarPos}
+        </if>
+        )
+    </insert>
+
+</mapper>

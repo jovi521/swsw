@@ -1,0 +1,93 @@
+server:
+  shutdown: graceful
+  servlet:
+    context-path: /SWSWSystem
+spring:
+  profiles:
+    active: @spring.profiles.active@
+  application:
+    name: @project.artifactId@
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+  main:
+    allow-bean-definition-overriding: on
+  cache:
+    type: redis
+  session:
+    # spring session使用存储类型，spirngboot默认就是使用redis方式，如果不想用可以填none。
+    store-type: REDIS
+    # spring session超时时间，如果不设置后缀, 默认为秒
+    timeout: 30m
+  activiti:
+    async-executor-activate: false
+    database-schema-update: true
+    history-level: full
+    db-history-used: true
+    check-process-definitions: true
+    process-definition-location-prefix: classpath*:**/processes/
+    process-definition-location-suffixes:
+      - /**.bpmn20.xml
+      - /*.bpmn
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 1MB
+mybatis:
+  #  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+  type-aliases-package: com.cdyw.swsw.common.domain
+windprofileradar:
+  path: D:/log/
+knife4j:
+  enable: true
+  basic:
+    enable: false
+    username: admin
+    password: 123456
+  documents:
+    - group: 1.2.x
+      name: 测试自定义标题分组
+      locations: classpath:md/*
+  contact:
+    name: Jovi
+    url: http://www.swswmain.com:8088/SWSWSystem
+    email: 506997994@qq.com
+  setting:
+    enableSwaggerModels: true
+    enableDocumentManage: true
+    enableHost: false
+    enableHostText: http://localhost:999
+    enableRequestCache: true
+    enableFilterMultipartApis: false
+    enableFilterMultipartApiMethodType: POST
+    language: zh-CN
+    enableAfterScript: true
+    swaggerModelName: 实体类别图
+    enableVersion: true
+  cors: false
+  production: false
+swsw:
+  # 名称
+  name: swsw
+  # 版本
+  version: 1.0
+  # 版权年份
+  copyrightYear: 2020
+  # 实例演示开关
+  demoEnabled: true
+  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
+  profile: D:/swsw/uploadPath
+  # 获取ip地址开关
+  addressEnabled: false
+  # 验证码类型 math 数组计算 char 字符验证
+  captchaType: math
+  basePackage: com.cdyw.swsw
+  title: ${spring.application.name}
+  description: ${spring.application.name} API Doc
+
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization

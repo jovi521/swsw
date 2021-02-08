@@ -1,0 +1,165 @@
+server:
+  port: 8088
+# actuator
+management:
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      # CORS跨域支持
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET,POST
+  #health端点的访问权限
+  endpoint:
+    health:
+      #选择展示
+      show-details: always
+spring:
+  application:
+    name: swsw-system
+  boot:
+    admin:
+      client:
+        enabled: on
+        url: http://127.0.0.1:8085/swswadmin
+        instance:
+          prefer-ip: on
+          #元数据，用于配置monitor server访问client端的凭证
+          metadata:
+            user.name: user
+            user.password: 123456
+          service-base-url: http://127.0.0.1:8088
+        #client可以连接到monitor server端的凭证
+        username: admin
+        password: 123456
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    platform: mysql
+    druid:
+      act:
+        #      基础配置
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/swswdb-act?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+        username: root
+        password: Cdyw@1005
+      business:
+        #      基础配置
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/swswdb?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+        username: root
+        password: Cdyw@1005
+      #     连接池配置
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      #Oracle需要打开注释
+      #validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      validation-query: SELECT 1
+      filters: stat,wall
+      #      监控配置
+      stat-view-servlet:
+        enabled: on
+        url-pattern: /druid/*
+        reset-enable: on
+        login-username: admin
+        login-password: SWSW_ENC(/WrawrEEVhC0XKd7F0fOKdu6iEMWladjQHuFIIIelzFB9gTn1YImD8EykCVYGhPt)
+  redis:
+    #    基础配置
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    #    password: SWSW_ENC(RRyZjNyZ1Pg7aSp/rJ0guHLBH0udkbIZwSefywKr9PVUKI/N5zFk+/1BGDZAvL4d)
+    timeout: 3000
+    #    线程池配置（2.X以后使用的是lettuce）
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+  main:
+    banner-mode: console
+  mail:
+    host: smtp.qq.com
+    protocol: smtp
+    port: 465
+    password: SWSW_ENC(fiw47JSG/ADmbdy2/DmhqHhgj8BhkQnKqzqljGASCrMhPocSUcI7Jp4BPl8EsRWVvSgkO3Eis+sU4dQSlE/Oig==)
+    username: 506997994@qq.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+logging:
+  level:
+    root: info
+mybatis:
+  configuration:
+    #    开发环境打印SQL语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: off
+    call-setters-on-nulls: on
+    jdbc-type-for-null: null
+    use-generated-keys: on
+    default-executor-type: reuse
+    default-statement-timeout: 600
+pagehelper:
+  #  dialect: mysql
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+jasypt:
+  encryptor:
+    #    自定义bean加密规则
+    bean: passwordEncryptorBean
+    property:
+      #      默认前缀是ENC( 后缀是）
+      prefix: SWSW_ENC(
+      suffix: )
+xxl:
+  job:
+    admin:
+      # 地址为刚刚配置的调度中心的访问地址
+      adminAddresses: http://127.0.0.1:8087/swswjob
+      accessToken:
+    executor:
+      # 自定义appName（执行器名称）
+      appname: xxl-job-swsw-system
+      # ip 可以写 （程序跑在的机器ip上），也可以不写
+      ip:
+      address:
+      port: 8888
+      # 执行器日志文件存储路径
+      logpath: e:/data/applogs/xxl-job/jobhandler
+      # 设置日志过期时间  -1表示永不过期
+      logretentiondays: 30
+application:
+  openOffice4:
+    host: localhost
+    port: 8100
+    path: D:\apache\openOffice4\program\soffice.exe
+    command: --headless -accept="socket,host=127.0.0.1,port=8100;urp;" -nofirststartwizard
+  libreOffice:
+    path: D:\LibreOffice\program\soffice.exe
+    command: --headless --convert-to
+  python:
+    path: python/word2pdf.py
+    command: python

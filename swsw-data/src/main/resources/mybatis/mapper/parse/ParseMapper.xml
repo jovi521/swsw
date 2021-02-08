@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.parse.ParseMapper">
+    <insert id="insertParse">
+        insert into ${tableName}(
+        name,pos_file,file_size,pos_picture,type,radarcd,time,layer,scan_mode,mcode,rain_type
+        ) values (
+        <if test="parse != null">
+            #{parse.name}, #{parse.pos_file}, #{parse.file_size}, #{parse.pos_picture},
+            #{parse.type}, #{parse.radarcd}, #{parse.time}, #{parse.layer},
+            #{parse.scan_mode},
+            #{parse.mcode}, #{parse.rain_type}
+        </if>
+        )
+    </insert>
+
+    <insert id="insertModeDataTSRainParse">
+        insert into ${tableName}(
+        ts_value, init_time, timestamp, fcst_hour, threshold
+        ) values (
+        <if test="parse != null">
+            #{parse.tsValue}, #{parse.initTime}, #{parse.timestamp}, #{parse.fcstHour},
+            #{parse.threshold}
+        </if>
+        )
+    </insert>
+
+    <insert id="insertShortforecastParse">
+        insert into ${tableName}(
+        name,pos_file,file_size,pos_picture,type,radarcd,time,layer,scan_mode,mcode,rain_type,forecast_count
+        ) values (
+        <if test="parse != null">
+            #{parse.name}, #{parse.pos_file}, #{parse.file_size}, #{parse.pos_picture},
+            #{parse.type}, #{parse.radarcd}, #{parse.time}, #{parse.layer},
+            #{parse.scan_mode},
+            #{parse.mcode}, #{parse.rain_type}, #{shortForecastCount}
+        </if>
+        )
+    </insert>
+</mapper>

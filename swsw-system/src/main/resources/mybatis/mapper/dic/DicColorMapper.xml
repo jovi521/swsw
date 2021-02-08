@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicColorMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicColor">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
+        <result column="criticalvalue" jdbcType="FLOAT" property="criticalvalue"/>
+        <result column="colorvalue" jdbcType="VARCHAR" property="colorvalue"/>
+        <result column="station_code" jdbcType="VARCHAR" property="stationCode"/>
+        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from dic_color
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicColor">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into dic_color (product_code, criticalvalue, colorvalue,
+        station_code, parent_code)
+        values (#{productCode,jdbcType=VARCHAR}, #{criticalvalue,jdbcType=FLOAT}, #{colorvalue,jdbcType=VARCHAR},
+        #{stationCode,jdbcType=VARCHAR}, #{parentCode,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicLevel">
+        update dic_color
+        set product_code  = #{productCode,jdbcType=VARCHAR},
+            criticalvalue = #{criticalvalue,jdbcType=FLOAT},
+            colorvalue    = #{colorvalue,jdbcType=VARCHAR},
+            station_code  = #{stationCode,jdbcType=VARCHAR},
+            parent_code   = #{parentCode,jdbcType=VARCHAR})
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, product_code, criticalvalue, colorvalue, station_code, parent_code
+        from dic_color
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, product_code, criticalvalue, colorvalue, station_code, parent_code
+        from dic_color
+    </select>
+
+    <select id="selectByProcutType" resultType="HashMap">
+        select product_code, criticalvalue, colorvalue
+        from dic_color
+        <where>
+            <if test="productType != null">
+                and product_code = #{productType}
+            </if>
+            <if test="parentCode != null">
+                and parent_code = #{parentCode}
+            </if>
+        </where>
+        order by product_code
+    </select>
+</mapper>

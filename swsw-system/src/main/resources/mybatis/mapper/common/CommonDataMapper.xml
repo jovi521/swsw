@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.common.CommonDataMapper">
+    <select id="getDataMonitorAtSta" resultType="map">
+        <trim prefix="select" suffixOverrides=",">
+            date_time as 'dateTime',
+            count(1) as 'molecular',
+        </trim>
+        from ${tableName}
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &lt;= now()
+            and date_time &gt; DATE_SUB( NOW(), INTERVAL 1 DAY_HOUR )
+        </trim>
+        group by date_time
+    </select>
+
+    <select id="getDataMonitorSate" resultType="map">
+        <trim prefix="select" suffixOverrides=",">
+            max(time) as 'dateTime',
+        </trim>
+        from ${tableName}
+        <trim prefix="where" prefixOverrides="and |or">
+            and `time` &lt;= unix_timestamp(now())
+            and `time` &gt; unix_timestamp(DATE_SUB( now(), INTERVAL 1 DAY_HOUR ))
+        </trim>
+    </select>
+
+    <select id="getDataMonitorRadarWea" resultType="map">
+        <trim prefix="select" suffixOverrides=",">
+            max(time) as 'dateTime',
+        </trim>
+        from ${tableName}
+        <trim prefix="where" prefixOverrides="and |or">
+            and `time` &lt;= unix_timestamp(now())
+            and `time` &gt; unix_timestamp(DATE_SUB( now(), INTERVAL 6 DAY_HOUR ))
+        </trim>
+    </select>
+
+    <select id="getDataMonitorAlarmMaxTem" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+            date_time,
+            tem,
+            1 as flag,
+        </trim>
+        <choose>
+            <when test="tableNameBefore != tableName">
+                from ${tableName}, ${tableNameBefore}
+            </when>
+            <otherwise>
+                from ${tableName}
+            </otherwise>
+        </choose>
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &gt;= #{startTime}
+            and date_time &lt;= #{endTime}
+            and station_name is not null
+            and tem != 999999.0000
+            and tem >= 30.0
+        </trim>
+        group by station_id_c
+        order by tem desc
+    </select>
+    <select id="getDataMonitorAlarmMaxPre" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+            date_time,
+            pre_1h,
+            1 as flag,
+        </trim>
+        <choose>
+            <when test="tableNameBefore != tableName">
+                from ${tableName}, ${tableNameBefore}
+            </when>
+            <otherwise>
+                from ${tableName}
+            </otherwise>
+        </choose>
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &gt;= #{startTime}
+            and date_time &lt;= #{endTime}
+            and station_name is not null
+            and pre_1h != 999999.0000
+            and pre_1h >= 7
+        </trim>
+        group by station_id_c
+        order by pre_1h desc
+    </select>
+    <select id="getDataMonitorAlarmMaxWin" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+            date_time,
+            win_s_max, win_d_s_max,
+            1 as flag,
+        </trim>
+        <choose>
+            <when test="tableNameBefore != tableName">
+                from ${tableName}, ${tableNameBefore}
+            </when>
+            <otherwise>
+                from ${tableName}
+            </otherwise>
+        </choose>
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &gt;= #{startTime}
+            and date_time &lt;= #{endTime}
+            and station_name is not null
+            and win_s_max != 999999.0000 and win_d_s_max != 999999.0000
+            and win_s_max >= 10.8
+        </trim>
+        group by station_id_c
+        order by win_s_max desc
+    </select>
+
+    <select id="getDataMonitorAlarmMinTem" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+            date_time,
+            tem,
+            2 as flag,
+        </trim>
+        <choose>
+            <when test="tableNameBefore != tableName">
+                from ${tableName}, ${tableNameBefore}
+            </when>
+            <otherwise>
+                from ${tableName}
+            </otherwise>
+        </choose>
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &gt;= #{startTime}
+            and date_time &lt;= #{endTime}
+            and station_name is not null
+            <!-- 新增过滤条件 -->
+            and tem != 999999.0000
+            and tem &lt; 30.0
+        </trim>
+        group by station_id_c
+        order by tem desc
+        limit 0, 5
+    </select>
+    <select id="getDataMonitorAlarmMinPre" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+            date_time,
+            pre_1h,
+            2 as flag,
+        </trim>
+        <choose>
+            <when test="tableNameBefore != tableName">
+                from ${tableName}, ${tableNameBefore}
+            </when>
+            <otherwise>
+                from ${tableName}
+            </otherwise>
+        </choose>
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &gt;= #{startTime}
+            and date_time &lt;= #{endTime}
+            and station_name is not null
+            and pre_1h != 999999.0000
+            and pre_1h &lt; 7
+        </trim>
+        group by station_id_c
+        order by pre_1h desc
+        limit 0, 5
+    </select>
+    <select id="getDataMonitorAlarmMinWin" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+            date_time,
+            win_s_max, win_d_s_max,
+            2 as flag,
+        </trim>
+        <choose>
+            <when test="tableNameBefore != tableName">
+                from ${tableName}, ${tableNameBefore}
+            </when>
+            <otherwise>
+                from ${tableName}
+            </otherwise>
+        </choose>
+        <trim prefix="where" prefixOverrides="and |or">
+            and date_time &gt;= #{startTime}
+            and date_time &lt;= #{endTime}
+            and station_name is not null
+            and win_s_max != 999999.0000 and win_d_s_max != 999999.0000
+            and win_s_max &lt; 10.8
+        </trim>
+        group by station_id_c
+        order by win_s_max desc
+        limit 0, 5
+    </select>
+
+    <select id="selectAtstationNewest" resultType="map">
+        SELECT
+        SUBSTRING_INDEX( station_name, '气象观测站', 1 ) as 'stationName',
+        date_add(date_time, interval 8 HOUR) as date_time,
+        <choose>
+            <when test="productType == 603">
+                truncate(tem, 1) as tem
+            </when>
+            <when test="productType == 605">
+                truncate(pre_1h, 1) as rain
+            </when>
+            <when test="productType == 607">
+                truncate(win_s_max, 1) as windspeed
+            </when>
+        </choose>
+        FROM ${tableName} d
+        RIGHT JOIN(
+        select max(date_time) maxTime
+        from ${tableName}) as temp
+        on d.date_time = temp.maxTime
+        where
+        <choose>
+            <when test="productType == 603">
+                tem &lt; 9999
+                ORDER BY tem
+            </when>
+            <when test="productType == 605">
+                pre_1h &lt; 9999
+                ORDER BY pre_1h
+            </when>
+            <when test="productType == 607">
+                win_s_max &lt; 9999
+                ORDER BY win_s_max
+            </when>
+        </choose>
+        <choose>
+            <when test="flag == 1">
+                DESC
+            </when>
+        </choose>
+    </select>
+
+</mapper>

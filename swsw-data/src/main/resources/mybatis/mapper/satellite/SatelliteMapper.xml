@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.satellite.SatelliteMapper">
+    <!-- 注意：要是实体类中已经用了注解@Alias别名，所有Type处都可以直接拿来用 -->
+    <resultMap id="satelliteMapper" type="satellite">
+        <id property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="format" column="format"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileUrl" column="file_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="dateTime" column="date_time"/>
+        <result property="fileTime" column="file_time"/>
+        <result property="dataLevl" column="data_levl"/>
+        <result property="bulCenter" column="bul_center"/>
+        <result property="sateName" column="sate_name"/>
+        <result property="sateSensor" column="sate_sensor"/>
+        <result property="dataArea" column="data_area"/>
+        <result property="prodId" column="prod_id"/>
+        <result property="sateSensorChanl" column="sate_sensor_chanl"/>
+        <result property="projType" column="proj_type"/>
+        <result property="spacDpi" column="spac_dpi"/>
+        <result property="dFileSaveHierarchy" column="d_file_save_hierarchy"/>
+        <result property="dSourceId" column="d_source_id"/>
+        <result property="dFileId" column="d_file_id"/>
+    </resultMap>
+
+    <sql id="sate-insert-column">
+        file_name, format, file_size, file_url, create_time, date_time,
+        file_time, data_levl, bul_center, sate_name, sate_sensor, data_area,
+        prod_id, sate_sensor_chanl, proj_type, spac_dpi, d_file_save_hierarchy,
+        d_source_id, d_file_id
+    </sql>
+
+    <insert id="insertSatellite" flushCache="true">
+        insert into ${tableName}(
+        <include refid="sate-insert-column"/>
+        )
+        values (
+        <if test="satellite != null">
+            #{satellite.fileName}, #{satellite.format}, #{satellite.fileSize}, #{satellite.fileUrl}, NOW(),
+            #{satellite.dateTime}, #{satellite.fileTime}, #{satellite.dataLevl}, #{satellite.bulCenter},
+            #{satellite.sateName},
+            #{satellite.sateSensor}, #{satellite.dataArea}, #{satellite.prodId}, #{satellite.sateSensorChanl},
+            #{satellite.projType},
+            #{satellite.spacDpi}, #{satellite.dFileSaveHierarchy},
+            #{satellite.dSourceId}, #{satellite.dFileId}
+        </if>
+        )
+    </insert>
+
+    <!-- TODO 此处只是为了秀技，Map和Type只用一个就可以了 -->
+    <select id="getSateFileByDfileIdAndDate" resultMap="satelliteMapper" resultType="satellite">
+        select *
+        from ${tableName}
+        <!-- 也可以用where标签  -->
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="dFileId != null">
+                and d_file_id = #{dFileId}
+            </if>
+            <if test="dateTime != null">
+                and date_time = #{dateTime}
+                and date_time >= DATE_SUB(#{dateTime}, INTERVAL 2 HOUR)
+            </if>
+        </trim>
+    </select>
+
+    <select id="createAndInsertSatelliteParseByParam" parameterType="object">
+        call createAndInsertSatelliteParseByParam(#{time}, #{insertValues}, #{statinIdC});
+    </select>
+</mapper>

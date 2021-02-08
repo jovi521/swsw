@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #      基础配置
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/swswdb?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai
+      username: root
+      password: 123456
+      #     连接池配置
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      #Oracle需要打开注释
+      #validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      validation-query: SELECT 1
+      filters: stat,wall
+      #      监控配置
+      stat-view-servlet:
+        enabled: on
+        url-pattern: /druid/*
+        reset-enable: on
+        login-username: admin
+        login-password: admin
+  redis:
+    #    基础配置
+    database: 0
+    host: 192.168.83.128
+    port: 6379
+    password: 123456
+    timeout: 3000
+    #    线程池配置（2.X以后使用的是lettuce）
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+  main:
+    banner-mode: off
+logging:
+  level:
+    root: info

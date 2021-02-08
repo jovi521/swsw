@@ -1,0 +1,16 @@
+server:
+  port: 8085
+  shutdown: immediate
+  servlet:
+    context-path: /swswadmin
+spring:
+  application:
+    name: swsw-admin
+  boot:
+    admin:
+      ui:
+        title: swsw监控系统
+  thymeleaf:
+    check-template-location: off
+  devtools:
+    add-properties: off

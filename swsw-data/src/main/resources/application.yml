@@ -1,0 +1,65 @@
+server:
+  shutdown: immediate
+  servlet:
+    context-path: /swswdata
+spring:
+  profiles:
+    active: @spring.profiles.active@
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+#自定义的健康信息，使用@Message@取得的是maven中的配置信息
+info:
+  groupId: @project.groupId@
+  artifactId: @project.artifactId@
+  version: @project.version@
+# actuator
+management:
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      # CORS跨域支持
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET,POST
+  #health端点的访问权限
+  endpoint:
+    health:
+      #选择展示
+      show-details: always
+mybatis:
+  #  config-location: classpath:mybatis/config/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+  type-aliases-package: com.cdyw.swsw.common.domain.entity
+windprofileradar:
+  path: D:/log/
+retrofit:
+  disable-void-return-type: false
+  enable-degrade: true
+  degrade-type: sentinel
+  resource-name-parser: com.github.lianjiatech.retrofit.spring.boot.degrade.DefaultResourceNameParser
+  enable-log: true
+  logging-interceptor: com.github.lianjiatech.retrofit.spring.boot.interceptor.DefaultLoggingInterceptor
+  pool:
+    pool1:
+      max-idle-connections: 3
+      keep-alive-second: 100
+    pool2:
+      max-idle-connections: 5
+      keep-alive-second: 50
+  retry-interceptor: com.github.lianjiatech.retrofit.spring.boot.retry.DefaultRetryInterceptor
+  global-converter-factories:
+    - retrofit2.converter.jackson.JacksonConverterFactory
+  global-call-adapter-factories:
+    - com.github.lianjiatech.retrofit.spring.boot.core.BodyCallAdapterFactory
+    - com.github.lianjiatech.retrofit.spring.boot.core.ResponseCallAdapterFactory
+common:
+  param:
+    baseUrl: http://10.194.130.41:10000/cimiss-web/
+  download:
+    baseUrl: http://10.194.130.40:8888

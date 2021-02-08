@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.thunder.ThunderMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.entity.thunder.Thunder">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="date_time" jdbcType="TIMESTAMP" property="dateTime"/>
+        <result column="lon" jdbcType="REAL" property="lon"/>
+        <result column="lat" jdbcType="REAL" property="lat"/>
+        <result column="m_second" jdbcType="VARCHAR" property="mSecond"/>
+        <result column="layer_num" jdbcType="INTEGER" property="layerNum"/>
+        <result column="mars_3" jdbcType="REAL" property="mars3"/>
+        <result column="pois_err" jdbcType="REAL" property="poisErr"/>
+        <result column="pois_type" jdbcType="INTEGER" property="poisType"/>
+        <result column="lit_current" jdbcType="REAL" property="litCurrent"/>
+        <result column="lit_prov" jdbcType="VARCHAR" property="litProv"/>
+        <result column="lit_city" jdbcType="VARCHAR" property="litCity"/>
+        <result column="lit_cnty" jdbcType="VARCHAR" property="litCnty"/>
+    </resultMap>
+
+    <sql id="radar-thunder-insert-column">
+        date_time, lon, lat,
+        m_second, layer_num, mars_3,
+        pois_err, pois_type, lit_current,
+        lit_prov, lit_city, lit_cnty
+    </sql>
+    <sql id="radar-thunder-select-column">
+        id,
+        date_time,
+        lon,
+        lat,
+        m_second,
+        layer_num,
+        mars_3,
+        pois_err,
+        pois_type,
+        lit_current,
+        lit_prov,
+        lit_city,
+        lit_cnty
+    </sql>
+
+    <delete id="deleteByPrimaryKey">
+        delete
+        from ${tableName}
+        <where>
+            id = #{id,jdbcType=INTEGER}
+        </where>
+    </delete>
+
+    <insert id="insert">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ${tableName} (
+        <include refid="radar-thunder-insert-column"/>
+        )
+        values (
+        <if test="thunder != null">
+            #{thunder.dateTime,jdbcType=TIMESTAMP}, #{thunder.lon,jdbcType=REAL}, #{thunder.lat,jdbcType=REAL},
+            #{thunder.mSecond,jdbcType=VARCHAR}, #{thunder.layerNum,jdbcType=INTEGER}, #{thunder.mars3,jdbcType=REAL},
+            #{thunder.poisErr,jdbcType=REAL}, #{thunder.poisType,jdbcType=INTEGER}, #{thunder.litCurrent,jdbcType=REAL},
+            #{thunder.litProv,jdbcType=VARCHAR}, #{thunder.litCity,jdbcType=VARCHAR},
+            #{thunder.litCnty,jdbcType=VARCHAR}
+        </if>
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey">
+        update ${tableName}
+        <set>
+            date_time = #{thunder.dateTime,jdbcType=TIMESTAMP},
+            lon = #{thunder.lon,jdbcType=REAL},
+            lat = #{thunder.lat,jdbcType=REAL},
+            m_second = #{thunder.mSecond,jdbcType=VARCHAR},
+            layer_num = #{thunder.layerNum,jdbcType=INTEGER},
+            mars_3 = #{thunder.mars3,jdbcType=REAL},
+            pois_err = #{thunder.poisErr,jdbcType=REAL},
+            pois_type = #{thunder.poisType,jdbcType=INTEGER},
+            lit_current = #{thunder.litCurrent,jdbcType=REAL},
+            lit_prov = #{thunder.litProv,jdbcType=VARCHAR},
+            lit_city = #{thunder.litCity,jdbcType=VARCHAR},
+            lit_cnty = #{thunder.litCnty,jdbcType=VARCHAR}
+        </set>
+        <where>
+            id = #{thunder.id,jdbcType=INTEGER}
+        </where>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="radar-thunder-select-column"/>
+        from ${tableName}
+        <where>
+            id = #{id,jdbcType=INTEGER}
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="radar-thunder-select-column"/>
+        from ${tableName}
+    </select>
+
+    <select id="getThunderByNumAndTime" resultType="thunder">
+        select
+        <include refid="radar-thunder-select-column"/>
+        from ${tableName}
+        <where>
+            <if test="layerNum != null">
+                layer_num = #{layerNum}
+            </if>
+            <if test="dateTime != null">
+                and date_time = #{dateTime}
+                and date_time >= DATE_SUB(#{dateTime}, INTERVAL 2 HOUR)
+            </if>
+        </where>
+    </select>
+</mapper>

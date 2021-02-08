@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.shortforecast.ShortForecastMapper">
+    <select id="getMcode" resultType="java.lang.String">
+        select mcode
+        from ${tableParseName}
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="startTime != null">
+                and `time` >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt;= #{endTime}
+            </if>
+        </trim>
+        group by mcode
+        order by cast((substring_index(mcode, '-', -1)) as UNSIGNED INTEGER)
+    </select>
+
+    <select id="getLayer" resultType="int">
+        select layer
+        from ${tableParseName}
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="startTime != null">
+                and `time` >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt;= #{endTime}
+            </if>
+        </trim>
+        group by layer
+        order by layer
+    </select>
+
+
+    <select id="getDataParseByTypeAndTime" resultType="map">
+        select DISTINCT ds.`name`
+        from ${tableName} ds
+                 right join (
+            select MIN(`time`) as mintime
+            from ${tableName}
+            where type = #{type}
+              and `time` &gt;= #{startTime}
+              and `time` &lt;= #{endTime}
+              and mcode = #{mcode}
+              and layer = #{layer}
+        ) as temp on temp.mintime = ds.time
+        where ds.type = #{type}
+          and ds.mcode = #{mcode}
+          and ds.layer = #{layer}
+    </select>
+</mapper>

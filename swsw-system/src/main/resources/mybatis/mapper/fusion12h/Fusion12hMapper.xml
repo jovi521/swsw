@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.fusion12h.Fusion12hMapper">
+    <resultMap id="fusion12hMap" type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12h">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="posFile" column="pos_file"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="type" column="type"/>
+        <result property="radarcd" column="radarcd"/>
+        <result property="time" column="time"/>
+        <result property="layer" column="layer"/>
+        <result property="mcode" column="mcode"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyType" column="modify_type"/>
+        <result property="forecastTime" column="forecast_time"/>
+    </resultMap>
+
+    <!-- 通用新增字段 -->
+    <sql id="commonFieldInsert">
+        name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type, forecast_time
+    </sql>
+    <!-- 通用查询字段 -->
+    <sql id="commonFieldSelect">
+        id, name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type, forecast_time
+    </sql>
+
+    <resultMap id="fusion12hBaseTimeMap" type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12hBaseTime">
+        <id property="id" column="id"/>
+        <result property="baseTime" column="basetime"/>
+        <result property="modifyType" column="modify_type"/>
+    </resultMap>
+    <resultMap id="fusion12hModifiedMap" type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12hModified">
+        <id property="id" column="id"/>
+        <result property="baseTime" column="basetime"/>
+        <result property="modifyType" column="modify_type"/>
+        <result property="forecastCount" column="forecast_count"/>
+        <result property="type" column="type"/>
+        <result property="layer" column="layer"/>
+    </resultMap>
+    <resultMap id="fusion12hNewestFileMap" type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12hNewestFile">
+        <id property="id" column="id"/>
+        <result property="baseTime" column="basetime"/>
+        <result property="forecastTime" column="forecast_time"/>
+        <result property="forecastCount" column="forecast_count"/>
+        <result property="type" column="type"/>
+        <result property="layer" column="layer"/>
+    </resultMap>
+    <resultMap id="fusion12hWeatherInformationMap"
+               type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12hWeatherInformation">
+        <id property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="typeValue" column="type_value"/>
+        <result property="typeChar" column="type_char"/>
+        <result property="forecastCount" column="forecast_count"/>
+        <result property="forecastTime" column="forecast_time"/>
+        <result property="baseTime" column="basetime"/>
+        <result property="lonLatIndex" column="lon_lat_index"/>
+    </resultMap>
+
+    <parameterMap id="fusion12hWeatherInformationParamMap"
+                  type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12hWeatherInformation">
+        <parameter property="id"/>
+        <parameter property="type"/>
+        <parameter property="typeValue"/>
+        <parameter property="typeChar"/>
+        <parameter property="forecastCount"/>
+        <parameter property="forecastTime"/>
+        <parameter property="baseTime"/>
+        <parameter property="lonLatIndex"/>
+    </parameterMap>
+
+    <parameterMap id="fusion12hBaseTimeParamMap" type="com.cdyw.swsw.common.domain.entity.fusion12h.Fusion12hBaseTime">
+        <parameter property="id"/>
+        <parameter property="baseTime"/>
+        <parameter property="modifyType"/>
+    </parameterMap>
+
+    <select id="selectNewestTime" resultType="map">
+        select max(time) time
+        from ${tableName}
+    </select>
+
+    <!--    <select id="selectModifiedNewest" resultType="map">-->
+    <!--        select ds.*-->
+    <!--        from ${tableName} as ds-->
+    <!--                 right join-->
+    <!--             (-->
+    <!--                 select MAX(time) maxTime, id-->
+    <!--                 from ${tableName}-->
+    <!--                 where layer = #{layer}-->
+    <!--                   and type = #{type}-->
+    <!--                   and modify_type > #{modifyType}-->
+    <!--                   and forecast_time >= #{startTime}-->
+    <!--                   and forecast_time &lt;= #{endTime}-->
+    <!--             ) as temp on ds.id = temp.id;-->
+    <!--    </select>-->
+
+    <select id="selectModifiedNewest" resultType="map">
+        select name
+        from data_fusion12h_newestfile
+        where basetime = #{baseTime}
+          and forecast_time = #{forecastTime}
+          and type = #{type}
+          and layer = #{layer}
+    </select>
+
+    <select id="selectUnmodifiedNewest" resultType="map">
+        select ds.*
+        from ${tableName} as ds
+                 right join
+             (
+                 select MAX(time) maxTime, id
+                 from ${tableName}
+                 where layer = #{layer}
+                   and type = #{type}
+                   and modify_type = #{modifyType}
+                   and forecast_time >= #{startTime}
+                   and forecast_time &lt;= #{endTime}
+             ) as temp on ds.id = temp.id;
+    </select>
+
+    <select id="selectByFilename" resultMap="fusion12hMap">
+        select id,
+               pos_file,
+               modify_type,
+               type,
+               time,
+               layer,
+               mcode,
+               forecast_time
+        from ${tableName}
+        where name = #{filename}
+    </select>
+
+    <select id="selectDetailInfoNewest" resultType="map">
+        select d.basetime, d.type, d.forecast_count, d.modify_type, c.count
+        from data_fusion12h_modified d
+                 RIGHT JOIN
+                 (select max(basetime) as time from data_fusion12h_modified) as temp
+                 ON d.basetime = temp.time
+                 LEFT JOIN
+             (select d.id, count(modify_type > 0 or null) as count
+              from data_fusion12h_modified d
+                       RIGHT JOIN
+                       (select max(basetime) as time from data_fusion12h_modified) as temp
+                       ON d.basetime = temp.time
+              GROUP BY type) as c
+             ON d.id = c.id
+        order by type, forecast_count
+    </select>
+
+    <select id="selectBasetimeNewest" resultType="map">
+        select *
+        from data_fusion12h_basetime d
+                 RIGHT JOIN
+                 (select max(basetime) as time from data_basetime_fusion12h) as temp
+                 ON d.basetime = temp.time
+        select *
+        from data_fusion12h_basetime d
+                 RIGHT JOIN
+                 (select max(basetime) as time from data_fusion12h_basetime) as temp
+                 ON d.basetime = temp.time
+    </select>
+
+    <select id="selectByBasetimeModified" resultType="map">
+        select *
+        from data_fusion12h_basetime
+        where basetime = #{baseTime}
+    </select>
+
+    <select id="selectModifytype" resultType="int">
+        select modify_type
+        from data_fusion12h_basetime
+        where basetime = #{baseTime}
+    </select>
+
+    <update id="updateNewestfile">
+        update data_fusion12h_newestfile
+        set name = #{filename}
+        where basetime = #{baseTime}
+          and forecast_time = #{forecastTime}
+          and type = #{type}
+          and layer = #{layer}
+    </update>
+    <update id="updateNewestFileByEntity">
+        update data_fusion12h_newestfile
+        set name = #{fusion12hNewestFile.name}
+        where basetime = #{fusion12hNewestFile.baseTime}
+          and forecast_time = #{fusion12hNewestFile.forecastTime}
+          and type = #{fusion12hNewestFile.type}
+          and layer = #{fusion12hNewestFile.layer}
+    </update>
+
+    <update id="updateModifytype">
+        update data_fusion12h_modified
+        set modify_type = #{modifyType}
+        where basetime = #{baseTime}
+          and forecast_count = #{forecastCount}
+          and type = #{type}
+          and layer = #{layer}
+    </update>
+
+    <update id="updateModifiedByEntity">
+        update data_fusion12h_modified
+        set modify_type = #{fusion12hModified.modifyType}
+        where basetime = #{fusion12hModified.baseTime}
+          and forecast_count = #{fusion12hModified.forecastCount}
+          and type = #{fusion12hModified.type}
+          and layer = 0
+    </update>
+
+    <insert id="insertFusion12h">
+        insert ${tablename}(<include refid="commonFieldInsert"/>)
+        values (#{fusion12h.name}, #{fusion12h.posFile}, #{fusion12h.fileSize}, #{fusion12h.type}, #{fusion12h.radarcd},
+        #{fusion12h.time},
+        #{fusion12h.layer}, #{fusion12h.mcode}, #{fusion12h.createTime}, #{fusion12h.modifyType},
+        #{fusion12h.forecastTime})
+    </insert>
+
+    <update id="updateFusion12h">
+        update ${tablename}
+        set file_size   = #{fusion12h.fileSize},
+            create_time = #{fusion12h.createTime}
+        where id = #{fusion12h.id}
+    </update>
+
+    <update id="updateBasetime">
+        update data_fusion12h_basetime
+        set modify_type = #{modifyType}
+        where basetime = #{baseTime}
+    </update>
+
+    <select id="selectBaseTimeByBaseTime" resultMap="fusion12hBaseTimeMap">
+        select id, basetime, modify_type
+        from data_fusion12h_basetime
+        where basetime = #{baseTime}
+    </select>
+
+    <select id="selectNewestFileByTimeRange" resultMap="fusion12hNewestFileMap">
+        select id, basetime, name, forecast_time, forecast_count, type, layer
+        from data_fusion12h_newestfile
+        where forecast_time &gt;= #{baseTime}
+          and forecast_time &lt;= unix_timestamp(date_add(FROM_UNIXTIME(#{baseTime}), INTERVAL 6 HOUR))
+        order by forecast_time
+    </select>
+
+    <select id="selectModifiedByBaseTime" resultMap="fusion12hModifiedMap">
+        select id, basetime, modify_type, forecast_count, type, layer
+        from data_fusion12h_modified
+        where basetime = #{baseTime}
+    </select>
+
+    <select id="selectModifiedByPara" resultMap="fusion12hModifiedMap">
+        select id, basetime, modify_type, forecast_count, type, layer
+        from data_fusion12h_modified
+        where basetime = #{baseTime}
+          and type = #{type}
+          and forecast_count = #{forecastCount}
+    </select>
+
+    <select id="selectNewestFileByBaseTime" resultMap="fusion12hNewestFileMap">
+        select id, basetime, name, forecast_time, forecast_count, type, layer
+        from data_fusion12h_newestfile
+        where basetime = #{baseTime}
+        order by forecast_time
+    </select>
+    <select id="selectWeatherInformationByForecastTime" resultMap="fusion12hWeatherInformationMap">
+        select id,
+               type,
+               type_value,
+               type_char,
+               forecast_time,
+               forecast_count,
+               basetime,
+               lon_lat_index
+        from data_fusion12h_weather_information
+        where forecast_time = #{forecastTime}
+        order by forecast_time
+    </select>
+    <insert id="insertWeatherInformation" parameterMap="fusion12hWeatherInformationParamMap">
+        insert into data_fusion12h_weather_information(type,
+                                                       type_value,
+                                                       forecast_time,
+                                                       forecast_count,
+                                                       basetime,
+                                                       lon_lat_index)
+        values (#{weatherInformation.type}, #{weatherInformation.typeValue}, #{weatherInformation.forecastTime},
+                #{weatherInformation.forecastCount}, #{weatherInformation.baseTime}, #{weatherInformation.lonLatIndex})
+    </insert>
+    <select id="selectWeatherInformationByParam" resultMap="fusion12hWeatherInformationMap">
+        select id,
+               type,
+               type_value,
+               type_char,
+               forecast_time,
+               forecast_count,
+               basetime,
+               lon_lat_index
+        from data_fusion12h_weather_information
+        where forecast_time = #{forecastTime}
+          and forecast_count = #{forecastCount}
+          and basetime = #{baseTime}
+          and type = #{type}
+          and lon_lat_index = #{lonLatIndex}
+        order by forecast_time
+    </select>
+    <update id="updateWeatherInformation">
+        update data_fusion12h_weather_information
+        set type_value = #{fusion12hWeatherInformation.typeValue}
+        where forecast_time = #{fusion12hWeatherInformation.forecastTime}
+          and forecast_count = #{fusion12hWeatherInformation.forecastCount}
+          and basetime = #{fusion12hWeatherInformation.baseTime}
+          and type = #{fusion12hWeatherInformation.type}
+          and lon_lat_index = #{fusion12hWeatherInformation.lonLatIndex}
+    </update>
+    <select id="selectByTimeAndType" resultMap="fusion12hMap">
+        select
+        <include refid="commonFieldSelect"/>
+        from ${tableName}
+        where forecast_time = #{forecastTime}
+        and type = #{type}
+        and layer = 0
+        order by forecast_time
+    </select>
+    <select id="selectNewestFileByForecastTimeAndType" resultMap="fusion12hNewestFileMap">
+        select id, basetime, name, forecast_time, forecast_count, type, layer
+        from data_fusion12h_newestfile
+        where forecast_time = #{forecastTime}
+          and type = #{type}
+          and layer = 0
+        order by forecast_time
+    </select>
+
+    <insert id="insertFusion12hBaseTime" flushCache="true" parameterMap="fusion12hBaseTimeParamMap"
+            statementType="STATEMENT">
+        <bind name="bt" value="fusion12hBaseTime"/>
+        insert into data_fusion12h_basetime (basetime, modify_type)
+        select
+        <if test="bt != null">
+            #{bt.dateTime}, #{bt.modifyType}
+        </if>
+        from dual where not exists
+        (select id, basetime, modify_type
+        from data_fusion12h_basetime where
+        datetime = #{bt.dateTime}
+        )
+    </insert>
+
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.common.CommonDataMapper">
+    <resultMap id="commonFileEntity" type="com.cdyw.swsw.common.domain.entity.file.FileEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_type" property="modifyType"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="commonFiledSelect">
+        id, name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type
+    </sql>
+
+    <!-- 通用新增字段 -->
+    <sql id="commonFieldInsert">
+        name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type
+    </sql>
+    <!-- 通用新增字段值 -->
+    <sql id="commonFieldInsertValue">
+        #{file.name},
+        #{file.posFile},
+        #{file.fileSize},
+        #{file.type},
+        #{file.radarcd},
+        #{file.time},
+        #{file.layer},
+        #{file.mcode},
+        #{file.createTime},
+        #{file.modifyType}
+    </sql>
+
+    <insert id="insertCommonData" flushCache="true" statementType="PREPARED">
+        <bind name="file" value="dataMap"/>
+        insert into ${tableName}(<include refid="commonFieldInsert"/>)
+        values (<include refid="commonFieldInsertValue"/>)
+    </insert>
+
+    <insert id="insertCommonInfo" flushCache="true" statementType="PREPARED">
+        <bind name="file" value="fileEntity"/>
+        insert into ${tableName}(<include refid="commonFieldInsert"/>)
+        values (<include refid="commonFieldInsertValue"/>)
+    </insert>
+
+    <insert id="insertSatelliteData" flushCache="true" statementType="PREPARED">
+        insert into ${tableName}(name, pos_file, file_size, pos_picture, type, radarcd, time, layer,
+                                 scan_mode, mcode, rain_type, lon_min, lon_max, lat_min, lat_max)
+        values (#{dataMap.name}, #{dataMap.pos_file}, #{dataMap.file_size}, #{dataMap.pos_picture}, #{dataMap.type},
+                #{dataMap.radarcd},
+                #{dataMap.time}, #{dataMap.layer}, #{dataMap.scan_mode}, #{dataMap.mcode}, #{dataMap.rain_type},
+                #{dataMap.lon_min}, #{dataMap.lon_max}, #{dataMap.lat_min}, #{dataMap.lat_max})
+    </insert>
+
+    <insert id="insertCldas1kmData" flushCache="true" statementType="PREPARED">
+        insert into ${tableName}(name, pos_file, file_size, pos_picture, type, radarcd, time, layer,
+                                 mcode, modify_type, create_time, lon_min, lon_max, lat_min, lat_max)
+        values (#{dataMap.name}, #{dataMap.pos_file}, #{dataMap.file_size}, #{dataMap.pos_picture}, #{dataMap.type},
+                #{dataMap.radarcd}, #{dataMap.time}, #{dataMap.layer}, #{dataMap.mcode}, #{dataMap.modify_type},
+                #{dataMap.create_time}, #{dataMap.lon_min}, #{dataMap.lon_max}, #{dataMap.lat_min}, #{dataMap.lat_max})
+    </insert>
+
+
+    <insert id="insertCommonLog">
+        insert into ${tableName}(create_time, date_time, type, status, msg)
+        values (#{log.createTime}, #{log.dateTime}, #{log.type}, #{log.status}, #{log.msg})
+    </insert>
+
+    <insert id="insertFusion">
+        insert into ${tableName}(name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type,
+                                 forecast_time)
+        values (#{fileEntity.name}, #{fileEntity.posFile}, #{fileEntity.fileSize}, #{fileEntity.type},
+                #{fileEntity.radarcd},
+                #{fileEntity.time}, #{fileEntity.layer}, #{fileEntity.mcode}, #{createTime}, #{fileEntity.modifyType},
+                #{forecastTime})
+    </insert>
+
+    <insert id="insertWeatherRadarExtrapolation">
+        insert into ${tableName}(name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type,
+                                 forecast_time, lon_min, lon_max, lat_min, lat_max)
+        values (#{radarExtrapolation.name}, #{radarExtrapolation.posFile}, #{radarExtrapolation.fileSize},
+                #{radarExtrapolation.type},
+                #{radarExtrapolation.radarcd},
+                #{radarExtrapolation.time}, #{radarExtrapolation.layer}, #{radarExtrapolation.mcode},
+                #{radarExtrapolation.createTime},
+                #{radarExtrapolation.modifyType}, #{radarExtrapolation.forecastTime}, #{radarExtrapolation.lonMin},
+                #{radarExtrapolation.lonMax}, #{radarExtrapolation.latMin}, #{radarExtrapolation.latMax})
+    </insert>
+
+    <select id="selectByName" resultType="map">
+        select name
+        from ${tableName}
+        where name = #{name}
+    </select>
+
+    <insert id="insertSatellite">
+        insert into ${tableName}(name, pos_file, file_size, pos_picture, type, radarcd, time, layer,
+                                 mcode, create_time, modify_type, lon_min, lon_max, lat_min, lat_max, start_time, end_time)
+        values (#{dataMap.name}, #{dataMap.pos_file}, #{dataMap.file_size}, #{dataMap.pos_picture}, #{dataMap.type},
+                #{dataMap.radarcd},
+                #{dataMap.time}, #{dataMap.layer},#{dataMap.mcode}, #{dataMap.create_time}, #{dataMap.modify_type},
+                #{dataMap.lon_min}, #{dataMap.lon_max}, #{dataMap.lat_min}, #{dataMap.lat_max}, #{dataMap.start_time}, #{dataMap.end_time})
+
+    </insert>
+
+</mapper>

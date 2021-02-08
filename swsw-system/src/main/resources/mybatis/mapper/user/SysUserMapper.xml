@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.user.SysUserMapper">
+    <resultMap id="userEntityMap" type="com.cdyw.swsw.common.domain.entity.user.SysUserEntity">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="passWord" column="pass_word"/>
+        <result property="description" column="description"/>
+        <result property="state" column="state"/>
+        <collection property="roleList" column="role_name" ofType="java.lang.String" autoMapping="true">
+            <constructor>
+                <arg column="role_name"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <select id="selectUserByUserName" resultMap="userEntityMap">
+        select a.*, c.role_name as role_name
+        from sys_user_table a
+                 LEFT JOIN sys_role_user_table b
+                           on a.user_id = b.user_id
+                 LEFT JOIN sys_role_table c
+                           on b.role_id = c.role_id
+        where user_name = #{userName}
+    </select>
+
+    <select id="selectUserByDepartmentidAndRoleid" resultType="hashmap">
+        select a.user_id, a.user_name
+        from sys_user_table a
+                 LEFT JOIN sys_department_user_table b
+                           on a.user_id = b.user_id
+                 LEFT JOIN sys_role_user_table c
+                           on b.user_id = c.user_id
+        where c.role_id = #{roleId}
+          and b.department_id = #{departmentId}
+    </select>
+
+    <select id="selectUserByDepartmentidAndRolename" resultType="hashmap">
+        select c.user_id id, c.user_name name
+        from sys_user_table c
+                 LEFT JOIN sys_department_user_table b
+                           on c.user_id = b.user_id
+                 LEFT JOIN sys_role_user_table a
+                           on b.user_id = a.user_id
+                 LEFT JOIN sys_role_table d
+                           on a.role_id = d.role_id
+        where d.role_name LIKE concat('%', #{roleName}, '%')
+          and b.department_id = #{departmentId}
+    </select>
+
+    <select id="selectThresholdByUserid" resultType="map">
+        select type, threshold, flag
+        from sys_user_threshold
+        where user_id = #{userId}
+    </select>
+
+    <update id="updateThresholdByUserid">
+        update sys_user_threshold
+        set threshold = #{threshold},
+            flag      = #{flag}
+        where user_id = #{userId}
+          and type = #{type}
+    </update>
+
+</mapper>

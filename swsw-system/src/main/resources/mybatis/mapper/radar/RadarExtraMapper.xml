@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.radar.RadarExtraMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.entity.radar.RadarExtra">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="format" jdbcType="VARCHAR" property="format"/>
+        <result column="file_size" jdbcType="REAL" property="fileSize"/>
+        <result column="file_url" jdbcType="VARCHAR" property="fileUrl"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="date_time" jdbcType="TIMESTAMP" property="dateTime"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="cnty" jdbcType="VARCHAR" property="cnty"/>
+        <result column="station_id_c" jdbcType="VARCHAR" property="stationIdC"/>
+        <result column="rada_model" jdbcType="VARCHAR" property="radaModel"/>
+        <result column="prod_type_rada" jdbcType="VARCHAR" property="prodTypeRada"/>
+        <result column="d_file_save_hierarchy" jdbcType="INTEGER" property="dFileSaveHierarchy"/>
+        <result column="d_source_id" jdbcType="VARCHAR" property="dSourceId"/>
+        <result column="d_file_id" jdbcType="VARCHAR" property="dFileId"/>
+        <result column="elev" jdbcType="REAL" property="elev"/>
+    </resultMap>
+
+    <select id="getDataParseByTypeAndTime" resultType="java.util.Map">
+        <trim prefix="select" suffixOverrides=",">
+            distinct `name`,
+        </trim>
+        from ${tableName} as ds
+        right join (
+        <trim prefix="select" suffixOverrides=",">
+            <choose>
+                <when test="endTime != null and endTime != '' and endTime != 0">
+                    Max( id ) as maxID, MAX( `time` ),
+                </when>
+                <otherwise>
+                    Min( id ) as maxID, Min( `time` ),
+                </otherwise>
+            </choose>
+        </trim>
+        from ${tableName}
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="startTime != null">
+                and `time` >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != '' and endTime != 0">
+                and `time` &lt;= #{endTime}
+            </if>
+            <if test="mcode != null and mcode != ''">
+                and mcode = #{mcode}
+            </if>
+        </trim>
+        ) as temp on temp.maxID = ds.id
+    </select>
+
+    <select id="getMcode" resultType="java.lang.String">
+        select mcode
+        from ${tableParseName}
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="startTime != null">
+                and `time` >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt;= #{endTime}
+            </if>
+        </trim>
+        group by mcode
+        order by cast((substring_index(mcode, '-', -1)) as UNSIGNED INTEGER)
+    </select>
+
+    <select id="selectMaxTime" resultType="map">
+        select if(max(d1.time) > max(d2.time), max(d1.time), max(d2.time))  maxTime
+        from ${tableName} d1,
+            ${tableNameOneMonthAgo} d2
+    </select>
+
+    <select id="selectByParam" resultType="map">
+        select name, pos_file, lon_min, lon_max, lat_min, lat_max
+        from ${tableName}
+        where
+        time = #{time} and type = #{type} and layer = #{layer} and mcode = #{mcode}
+    </select>
+</mapper>

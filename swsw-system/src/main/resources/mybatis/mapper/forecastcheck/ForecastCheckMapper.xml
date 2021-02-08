@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.forecastcheck.ForecastCheckMapper">
+    <select id="selectByThresholdAndTimeperiod" resultType="hashmap">
+        select *, (SELECT MAX(fcst_hour) + 1 from ${tablename1}
+        where
+        timestamp in
+        <foreach item="item" index="index" collection="timeList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and threshold = #{threshold})as fcst_count
+        from ${tablename1}
+        where
+        timestamp in
+        <foreach item="item" index="index" collection="timeList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and threshold = #{threshold}
+        <if test="tablename2 != null">
+            union all
+            select *, (SELECT MAX(fcst_hour) + 1 from ${tablename2}
+            where
+            timestamp in
+            <foreach item="item" index="index" collection="timeList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and threshold = #{threshold})as fcst_count
+            from ${tablename2}
+            where
+            timestamp in
+            <foreach item="item" index="index" collection="timeList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and threshold = #{threshold}
+        </if>
+    </select>
+</mapper>

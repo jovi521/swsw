@@ -1,0 +1,29 @@
+{
+  "requestTime": "2020-05-29 02:59:50",
+  "returnCode": "-7001",
+  "responseTime": "2020-05-29 02:59:50",
+  "takeTime": 0.105,
+  "returnMessage": "Incorrect Parameter. detail:[E17003 L1 C801] 数据格式错\u0000",
+  "colCount": "0",
+  "requestParams": "adminCodes=a,b,c表示取值为a或b或c&staTypes=111&limitCnt=200&orderBy=D_DATETIME:DESC&dataCode=SURF_CHN_MUL_HOR&eleValueRanges=VIS:(0,1000),RHU(70,1000)&staLevels=011&elements=Station_Name,Province,City,Cnty,Datetime&interfaceId=getSurfEleInRegionByTimeRange&timeRange=[20200527000000,20200527010000]",
+  "rowCount": 0
+},
+
+{
+" FILE_NAME[文件名]": "Z_SATE_C_BAWX_20200105032004_P_FY2G_SEC_IR2_LCN_20200105_0300.AWX",
+" FORMAT[文件格式]": "AWX",
+" FILE_SIZE[文件大小]": 265216,
+" FILE_URL[存储路径]": "http://10.194.130.40:8888/WRSS/data/ftpfile.svt?url=L0NNQURBQVMvREFUQS9TQVRFL0ZZLTJHL1NBVEVfTDJfRjJHX1ZJU1NSX01XQl9MQlRfU0VDX0xDTi8yMDIwLzIwMjAwMTA1L1pfU0FURV9DX0JBV1hfMjAyMDAxMDUwMzIwMDRfUF9GWTJHX1NFQ19JUjJfTENOXzIwMjAwMTA1XzAzMDAuQVdY",
+"Datetime[资料时间]": "2020-01-05 03:00:00",
+" FILETIME[文件生成时间]": "20200105032004",
+" DATA_Levl[数据级别]": "L2",
+" Bul_Center[编报(加工)中心]": "BAWX",
+" SATE_Name[卫星名称]": "FY2G",
+" SATE_Sensor[卫星仪器名称]": "VISSR",
+" Data_Area[数据区域范围]": "LCN",
+" Prod_ID[产品标识]": "SEC",
+" SATE_Sensor[卫星仪器名称]_CHANL": "IR2",
+" D_FILE_SAVE_HIERARCHY[存储状态]": 0,
+" D_SOURCE_ID[数据来源]": "K.0472.0001.R001",
+" D_FILE_ID[文件标识]": "Z_SATE_C_BAWX_20200105032004_P_FY2G_SEC_IR2_LCN_20200105_0300.AWX"
+}

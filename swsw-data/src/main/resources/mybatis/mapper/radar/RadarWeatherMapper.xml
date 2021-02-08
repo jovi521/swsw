@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.radar.RadarWeatherMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.entity.radar.RadarWeather">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="format" jdbcType="VARCHAR" property="format"/>
+        <result column="file_size" jdbcType="REAL" property="fileSize"/>
+        <result column="file_url" jdbcType="VARCHAR" property="fileUrl"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="date_time" jdbcType="TIMESTAMP" property="dateTime"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="cnty" jdbcType="VARCHAR" property="cnty"/>
+        <result column="station_id_c" jdbcType="VARCHAR" property="stationIdC"/>
+        <result column="rada_model" jdbcType="VARCHAR" property="radaModel"/>
+        <result column="prod_type_rada" jdbcType="VARCHAR" property="prodTypeRada"/>
+        <result column="elev" jdbcType="REAL" property="elev"/>
+    </resultMap>
+
+    <resultMap id="ParseResultMap" type="com.cdyw.swsw.common.domain.ao.txt.CommonRadarParseTxt">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="file_name" property="fileName"/>
+        <result column="product_id" property="productID"/>
+        <result column="product_name" property="productName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="station_no" property="stationNo"/>
+        <result column="station_name" property="stationName"/>
+        <result column="radar_coor" property="radarCoor"/>
+        <result column="max_dis" property="maxDis"/>
+        <result column="height" property="height"/>
+        <result column="projection" property="projection"/>
+        <result column="left_bottom_coor" property="leftBottomCoor"/>
+        <result column="right_top_coor" property="rightTopCoor"/>
+        <result column="width_height" property="widthHeight"/>
+        <result column="radar_pos" property="radarPos"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_type" property="modifyType"/>
+    </resultMap>
+    <!-- 通用新增字段 -->
+    <sql id="commonFiledInsert">
+        name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type,
+    </sql>
+    <!-- 通用新增字段(天气雷达和相控阵雷达)sql -->
+    <sql id="commonFieldInsertRadar">
+        `file_name`, `product_id`, `product_name`, `start_time`, `end_time`,
+        `station_no`, `station_name`, `radar_coor`, `max_dis`, `height`,
+        `projection`, `left_bottom_coor`, `right_top_coor`, `width_height`, `radar_pos`
+    </sql>
+    <!-- 通用新增字段值 -->
+    <sql id="commonFieldInsertRadarValue">
+        #{file.name},
+        #{file.posFile},
+        #{file.fileSize},
+        #{file.type},
+        #{file.radarcd},
+        #{file.time},
+        #{file.layer},
+        #{file.mcode},
+        unix_timestamp(now()),
+        #{file.modifyType},
+    </sql>
+
+    <sql id="radar-wea-insert-column">
+        file_name, format, file_size, file_url, create_time, date_time, province, city, cnty,
+        station_id_c, rada_model, prod_type_rada, d_file_save_hierarchy, d_source_id, d_file_id, elev
+    </sql>
+    <sql id="radar-wea-select-column">
+        id, file_name, format, file_size, file_url, create_time, date_time, province, city, cnty,
+        station_id_c, rada_model, prod_type_rada, d_file_save_hierarchy, d_source_id, d_file_id, elev
+    </sql>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from ${tableName}
+        <where>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER}
+            </if>
+        </where>
+    </delete>
+
+    <insert id="insert" parameterType="radarWeather">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ${tableName} (
+        <include refid="radar-wea-insert-column"/>
+        )
+        values (
+        <if test="radarWeather != null">
+            #{radarWeather.fileName,jdbcType=VARCHAR}, #{radarWeather.format,jdbcType=VARCHAR},
+            #{radarWeather.fileSize,jdbcType=REAL},
+            #{radarWeather.fileUrl,jdbcType=VARCHAR}, NOW(), #{radarWeather.dateTime,jdbcType=TIMESTAMP},
+            #{radarWeather.province,jdbcType=VARCHAR}, #{radarWeather.city,jdbcType=VARCHAR},
+            #{radarWeather.cnty,jdbcType=VARCHAR},
+            #{radarWeather.stationIdC,jdbcType=VARCHAR}, #{radarWeather.radaModel,jdbcType=VARCHAR},
+            #{radarWeather.prodTypeRada,jdbcType=VARCHAR},
+            #{radarWeather.dFileSaveHierarchy,jdbcType=INTEGER}, #{radarWeather.dSourceId,jdbcType=VARCHAR},
+            #{radarWeather.dFileId,jdbcType=VARCHAR},
+            #{radarWeather.elev,jdbcType=REAL}
+        </if>
+        )
+    </insert>
+
+    <insert id="insertRadarWeatherBase" flushCache="true" statementType="PREPARED">
+        <bind name="radar" value="fileEntity"/>
+        insert into ${tableName} (
+        <trim suffixOverrides="">
+            <include refid="commonFiledInsert"/>
+        </trim>
+        )
+        values (
+        <if test="radar != null">
+            <trim suffixOverrides="">
+                <include refid="commonFieldInsertRadarValue"/>
+            </trim>
+        </if>
+        )
+    </insert>
+
+    <insert id="insertRadarParse" flushCache="true" statementType="PREPARED">
+        <bind name="file" value="fileEntity"/>
+        <bind name="radar" value="radarParseTxt"/>
+        insert into ${tableName} (
+        <include refid="commonFiledInsert"/>
+        <include refid="commonFieldInsertRadar"/>
+        )
+        values (
+        <if test="radar != null">
+            <include refid="commonFieldInsertRadarValue"/>
+            #{file.name}, #{radar.productID}, #{radar.productName}, #{radar.startTime}, #{radar.endTime},
+            #{radar.stationNo}, #{radar.stationName},
+            #{radar.radarCoor}, #{radar.maxDis}, #{radar.height}, #{radar.projection}, #{radar.leftBottomCoor},
+            #{radar.rightTopCoor},#{radar.widthHeight},#{radar.radarPos}
+        </if>
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.entity.radar.RadarWeather">
+        update ${tableName}
+        <if test="radarWeather != null">
+            <trim prefix="set" suffixOverrides=",">
+                file_name = #{radarWeather.fileName,jdbcType=VARCHAR},
+                format = #{radarWeather.format,jdbcType=VARCHAR},
+                file_size = #{radarWeather.fileSize,jdbcType=REAL},
+                file_url = #{radarWeather.fileUrl,jdbcType=VARCHAR},
+                create_time = #{radarWeather.createTime,jdbcType=TIMESTAMP},
+                date_time = #{radarWeather.dateTime,jdbcType=TIMESTAMP},
+                province = #{radarWeather.province,jdbcType=VARCHAR},
+                city = #{radarWeather.city,jdbcType=VARCHAR},
+                cnty = #{radarWeather.cnty,jdbcType=VARCHAR},
+                station_id_c = #{radarWeather.stationIdC,jdbcType=VARCHAR},
+                rada_model = #{radarWeather.radaModel,jdbcType=VARCHAR},
+                prod_type_rada = #{radarWeather.prodTypeRada,jdbcType=VARCHAR},
+                d_file_save_hierarchy = #{radarWeather.dFileSaveHierarchy,jdbcType=INTEGER},
+                d_source_id = #{radarWeather.dSourceId,jdbcType=VARCHAR},
+                d_file_id = #{radarWeather.dFileId,jdbcType=VARCHAR},
+                <if test="elev != null">
+                    elev = #{radarWeather.elev,jdbcType=REAL},
+                </if>
+            </trim>
+            <where>
+                <if test="id != null">
+                    id = #{radarWeather.id,jdbcType=INTEGER}
+                </if>
+            </where>
+        </if>
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="radar-wea-select-column"/>
+        from ${tableName}
+        <where>
+            id = #{id,jdbcType=INTEGER}
+        </where>
+    </select>
+
+    <select id="selectParseByPathAndName" parameterType="java.lang.Integer" resultMap="ParseResultMap">
+        select id, `name`, pos_file
+        from ${tableName}
+        <where>
+            pos_file = #{path}
+            and `name` = #{name}
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="radar-wea-select-column"/>
+        from ${tableName}
+    </select>
+
+    <select id="getRadarWeaFileByDfileIdAndDate" resultType="com.cdyw.swsw.common.domain.entity.radar.RadarWeather">
+        select
+        <include refid="radar-wea-select-column"/>
+        from ${tableName}
+        <where>
+            <if test="dFileId != null">
+                d_file_id = #{dFileId,jdbcType=VARCHAR}
+            </if>
+            <if test="dateTime != null">
+                and date_time = #{dateTime,jdbcType=TIMESTAMP}
+                and date_time >= DATE_SUB(#{dateTime}, INTERVAL 2 HOUR)
+            </if>
+        </where>
+    </select>
+
+    <select id="createAndInsertRadarWeaParseByParam" parameterType="object">
+        call createAndInsertRadarWeaParseByParam(#{time}, #{insertValues}, #{statinIdC});
+    </select>
+</mapper>

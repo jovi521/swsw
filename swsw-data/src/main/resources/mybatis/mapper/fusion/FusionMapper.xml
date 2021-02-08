@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.data.domain.dao.fusion.FusionMapper">
+    <resultMap id="commonFileEntity" type="com.cdyw.swsw.common.domain.entity.file.FileEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_type" property="modifyType"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="commonFiledSelect">
+        id, name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type
+    </sql>
+
+    <select id="getFusionsByParam" resultMap="commonFileEntity">
+        select
+        <include refid="commonFiledSelect"/>
+        from ${tableName}
+        <trim prefix="where">
+            time = #{time}
+        </trim>
+    </select>
+
+    <insert id="insertBasetime">
+        insert data_fusion12h_basetime(basetime, modify_type)
+        values (#{basetime}, #{modifyType})
+    </insert>
+
+    <insert id="insertModified">
+        insert data_fusion12h_modified(basetime, type, forecast_count, modify_type, layer)
+        values (#{basetime}, #{type}, #{forecastCount}, #{modifyType}, 0)
+    </insert>
+
+    <select id="selectDetailInfoNewest" resultType="map">
+        select d.*
+        from data_fusion12h_modified d
+                 RIGHT JOIN
+                 (select max(basetime) as maxtime FROM data_fusion12h_modified) as temp
+                 on d.basetime = temp.maxtime
+    </select>
+
+    <select id="selectNewestfile" resultType="map">
+        select *
+        from data_fusion12h_newestfile
+        where basetime = #{basetime}
+          and forecast_count = #{forecastCount}
+          and type = #{type}
+          and layer = #{layer}
+    </select>
+
+    <select id="selectModified" resultType="map">
+        select *
+        from data_fusion12h_modified
+        where basetime = #{basetime}
+          and forecast_count = #{forecastCount}
+          and type = #{type}
+          and layer = #{layer}
+    </select>
+
+    <insert id="insertNewestfile">
+        insert data_fusion12h_newestfile(basetime, forecast_count, forecast_time, name, type, layer)
+        values (#{basetime}, #{forecastCount}, #{forecastTime}, #{name}, #{type}, 0)
+    </insert>
+
+    <select id="selectNewestWeather" resultType="map">
+        select d.*
+        from data_fusion12h_weather_information d
+                 RIGHT JOIN
+             (select max(basetime) as maxtime FROM data_fusion12h_weather_information) as temp
+             on d.basetime = temp.maxtime
+    </select>
+
+    <select id="selectWeather" resultType="map">
+        select *
+        from data_fusion12h_weather_information
+        where basetime = #{basetime}
+          and forecast_count = #{forecastCount}
+          and type = #{type}
+    </select>
+
+    <insert id="insertWeather">
+        insert data_fusion12h_weather_information(type, type_value, type_char, forecast_count, forecast_time, basetime,
+                                                  lon_lat_index)
+        values (#{map.type}, #{map.type_value}, #{map.type_char}, #{map.forecast_count}, #{map.forecast_time},
+                #{map.basetime}, #{map.lon_lat_index})
+    </insert>
+</mapper>

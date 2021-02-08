@@ -1,0 +1,189 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: swsw-data
+  boot:
+    admin:
+      client:
+        enabled: on
+        url: http://127.0.0.1:8085/swswadmin
+        instance:
+          prefer-ip: on
+          #元数据，用于配置monitor server访问client端的凭证
+          metadata:
+            user.name: user
+            user.password: 123456
+          #            此处指的是当前项目的url并不是admin服务端的url
+          service-base-url: http://127.0.0.1:8086
+        #client可以连接到monitor server端的凭证
+        username: admin
+        password: SWSW_ENC(bfEaTdvx9fx1baCDlxgcEzfW14+T/jxMAwY6lD0jNVSDZVcvm/a7GdHwW22M0ym6)
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #      基础配置
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/swswdb?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai
+      username: root
+      password: Cdyw@1005
+      #     连接池配置
+      initial-size: 100
+      max-active: 100
+      min-idle: 50
+      max-wait: 90000
+      pool-prepared-statements: false
+      connect-properties: keepAlive=true
+      max-pool-prepared-statement-per-connection-size: 100
+      time-between-eviction-runs-millis: 90000
+      min-evictable-idle-time-millis: 300000
+      #Oracle需要打开注释
+      #validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      #      validation-query: SELECT 1
+      filters: stat,wall
+      #      监控配置
+      stat-view-servlet:
+        enabled: on
+        url-pattern: /druid/*
+        reset-enable: on
+        login-username: admin
+        login-password: SWSW_ENC(/WrawrEEVhC0XKd7F0fOKdu6iEMWladjQHuFIIIelzFB9gTn1YImD8EykCVYGhPt)
+      filter:
+        wall:
+          enabled: on
+          config:
+            comment-allow: on
+            multi-statement-allow: on
+  redis:
+    #    基础配置
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    #    password: SWSW_ENC(RRyZjNyZ1Pg7aSp/rJ0guHLBH0udkbIZwSefywKr9PVUKI/N5zFk+/1BGDZAvL4d)
+    timeout: 3000
+    #    线程池配置（2.X以后使用的是lettuce）
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+  main:
+    banner-mode: console
+    allow-bean-definition-overriding: on
+  mail:
+    host: smtp.qq.com
+    protocol: smtp
+    port: 465
+    password: SWSW_ENC(fiw47JSG/ADmbdy2/DmhqHhgj8BhkQnKqzqljGASCrMhPocSUcI7Jp4BPl8EsRWVvSgkO3Eis+sU4dQSlE/Oig==)
+    username: 506997994@qq.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+          #  quartz:
+          #    job-store-type: jdbc
+          #    properties:
+          #      org:
+          #        quartz:
+          #          scheduler:
+          #            instanceName: clusteredScheduler
+          #            instanceId: AUTO
+          #          jobStore:
+          #            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+          #            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+          #            tablePrefix: QRTZ_
+          #            isClustered: true
+          #            clusterCheckinInterval: 10000
+          #            useProperties: false
+          #          threadPool:
+          #            class: org.quartz.simpl.SimpleThreadPool
+          #            threadCount: 10
+          #            threadPriority: 5
+          #            threadsInheritContextClassLoaderOfInitializingThread: true
+          # sharding做读写分离（备用）
+          #sharding:
+          #  jdbc:
+          #    datasource:
+          #      names: swswdb,swswdb-slave1
+          #      swswdb:
+          #        type: com.alibaba.druid.pool.DruidDataSource
+          #        driver-class-name: com.mysql.cj.jdbc.Driver
+          #        url: jdbc:mysql://127.0.0.1:3306/swswdb?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai
+          #        username: root
+          #        password: SWSW_ENC(I8ULrmrnsSuDBqzcm0bTtwtu0BK1FdmDqi13au9VP5ueTPrP2MB2oSbRwhfnI21+)
+          #      swswdb-slave1:
+          #        type: com.alibaba.druid.pool.DruidDataSource
+          #        driver-class-name: com.mysql.cj.jdbc.Driver
+          #        url: jdbc:mysql://127.0.0.1:3306/swswdb-slave1?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai
+          #        username: root
+          #        password: SWSW_ENC(I8ULrmrnsSuDBqzcm0bTtwtu0BK1FdmDqi13au9VP5ueTPrP2MB2oSbRwhfnI21+)
+          #    config:
+          #      masterslave:
+          #        name: swsw
+          #        master-data-source-name: swswdb
+          #        slave-data-source-names: swswdb-slave1
+          #        # 配置从库选择策略，提供轮询与随机，这里选择用轮询//random 随机 //round_robin 轮询
+          #        load-balance-algorithm-type: round_robin
+          #      props:
+          #        sql:
+          show: true
+logging:
+  level:
+    root: info
+knife4j:
+  contact:
+    name: Jovi
+    url: http://www.swswdata.com:8086/swswdata
+    email: 506997994@qq.com
+mybatis:
+  configuration:
+    #    开发环境打印SQL语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: off
+    call-setters-on-nulls: on
+    jdbc-type-for-null: null
+    use-generated-keys: on
+    default-executor-type: reuse
+    default-statement-timeout: 600
+    #    开启驼峰命名法
+    map-underscore-to-camel-case: on
+jasypt:
+  encryptor:
+    #    自定义bean加密规则
+    bean: passwordEncryptorBean
+    property:
+      #      默认前缀是ENC( 后缀是）
+      prefix: SWSW_ENC(
+      suffix: )
+rsa:
+  encrypt:
+    open: true # 是否开启加密 true  or  false
+    showLog: true # 是否打印加解密log true  or  false
+    publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgTQG5aE2kvnS2wX9Qbx9YlNrMdeMhr2+7PS9kG+OmxuvPyOHxwB8HOl/k/jD5ds2m8et1pkfEXbn56D0sK/JANJYXoJBE79FHl6O4CjY5O/99cTTiupiIp7LFV1e7ITodPeXbCQUW/KtYiDV8YuPh19oQJU4d7Q5RKlYuE7KXawIDAQAB # RSA公钥 软件生成
+    privateKey: MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAOBNAbloTaS+dLbBf1BvH1iU2sx14yGvb7s9L2Qb46bG68/I4fHAHwc6X+T+MPl2zabx63WmR8RdufnoPSwr8kA0lhegkETv0UeXo7gKNjk7/31xNOK6mIinssVXV7shOh095dsJBRb8q1iINXxi4+HX2hAlTh3tDlEqVi4TspdrAgMBAAECgYBuen+W6yETPBwQyE4FODagUvFSM96kAN1vxDtLe9EtnF0aA0AG6zJdRQtmpy1IMpQo3o+zayt+NQwdY55920d+HA938UIBbcrUJjqik3/EeE04M8hDfMq+/+HmadmgDC7dFuvNW+Ozo6ke6Qh8ZyEdXKm4/LqzmtEB2yXFCFchQQJBAPvPpuy9tFWWF/jEqAXDYdHmNj+PADfHAlCdG9JzRwFqvFxJzVuf6dFcIme2BIwrut5QlCNzYKFci4wav6wNN68CQQDkCDNosDhJ8I85Pgh7c9tY9IoezRl6RHTveNcK83mZD9QNICzUyTuTgvZIyko5lgv3Aarnv9YPEWjkZ7bfts8FAkAs4LU/PBAHsNhU3beUT13/qqfAbBv91Nn0xAtRVnoxJnSrffu7eKSTS3hWQ3pMAP8s3++G4ek22OeF8L54S2LBAkAksbUkGYdVTqKdgX/37bLUY7V+M17wL+fpSTbBimB84vEqk4zjSOaPXDmpiPPcxGp0ew43cMVPc2u/pXjmExLJAkAryDLD72MQhP18fcfXAzWLPIRdwKKuUV/YQVO1UDNWKGZvBlx7dd58jB8TgXSF22OTgQXCpuKL8h8V+ueVQIcb # RSA私钥 软件生成
+xxl:
+  job:
+    admin:
+      # 地址为刚刚配置的调度中心的访问地址
+      adminAddresses: http://127.0.0.1:8087/swswjob
+      accessToken:
+    executor:
+      # 自定义appName（执行器名称）
+      appname: xxl-job-swsw-data
+      # ip 可以写 （程序跑在的机器ip上），也可以不写
+      ip:
+      address:
+      port: 9999
+      # 执行器日志文件存储路径
+      logpath: e:/data/applogs/xxl-job/jobhandler
+      # 设置日志过期时间  -1表示永不过期
+      logretentiondays: 30

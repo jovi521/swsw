@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.cldas1km.Cldas1kmMapper">
+
+    <!-- 通用新增字段 -->
+    <sql id="queryResult">
+        name, pos_file, file_size, type, time, lon_max, lon_min, lat_max, lat_min
+    </sql>
+
+    <select id="selectByParam" resultType="map">
+        select
+        <include refid="queryResult"/>
+        from ${tableName}
+        where
+        <foreach collection="productType" open="(" close=")" separator=" or " item="product">
+            type = #{product}
+        </foreach>
+        and time &lt;= #{endTime} and time &gt;= #{startTime}
+    </select>
+
+</mapper>

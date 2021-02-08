@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.windfieldinversion.WindfieldInversionMapper">
+
+    <!-- 通用新增字段 -->
+    <sql id="queryResult">
+        name, pos_file, file_size, type, time, lon_max, lon_min, lat_max, lat_min
+    </sql>
+
+    <select id="selectByTypeAndTimeAndLayer" resultType="map">
+        select
+        <include refid="queryResult"/>
+        from ${tableName}
+        where
+        type = #{type}
+        <if test="layer != null">
+            and layer = #{layer}
+        </if>
+        and time &lt;= #{endTime} and time &gt;= #{startTime}
+        order by layer
+    </select>
+
+</mapper>

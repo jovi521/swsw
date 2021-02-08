@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.product.DataProductMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.entity.product.DataProduct">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_type" jdbcType="INTEGER" property="productType"/>
+        <result column="product_content" jdbcType="VARCHAR" property="productContent"/>
+        <result column="product_path" jdbcType="VARCHAR" property="productPath"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="publish_status" jdbcType="INTEGER" property="publishStatus"/>
+    </resultMap>
+    <resultMap id="commonFileEntity" type="com.cdyw.swsw.common.domain.entity.file.FileEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pos_file" property="posFile"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="type" property="type"/>
+        <result column="radarcd" property="radarcd"/>
+        <result column="time" property="time"/>
+        <result column="layer" property="layer"/>
+        <result column="mcode" property="mcode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_type" property="modifyType"/>
+    </resultMap>
+    <resultMap id="dataProductBase" type="com.cdyw.swsw.common.domain.entity.product.DataProductBase">
+        <id column="id" property="id"/>
+        <result column="id" property="productType"/>
+        <result column="product_id" property="productId"/>
+        <result column="product_type" property="productType"/>
+        <result column="create_time" property="createTime"/>
+        <result column="base_time" property="baseTime"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="publish_dept" property="publishDept"/>
+        <result column="forecaster" property="forecaster"/>
+        <result column="signer" property="signer"/>
+        <result column="year" property="year"/>
+        <result column="number" property="number"/>
+        <result column="subtitle" property="subtitle"/>
+        <result column="line" property="line"/>
+        <result column="stadium" property="stadium"/>
+        <result column="hours" property="hours"/>
+    </resultMap>
+    <resultMap id="dataProductWeaGridForecast"
+               type="com.cdyw.swsw.common.domain.entity.product.DataProductWeaGridForecast">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="text" property="text"/>
+    </resultMap>
+    <resultMap id="dataProductWeaShortForecast"
+               type="com.cdyw.swsw.common.domain.entity.product.DataProductWeaShortForecast">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="tem_min6" property="temMin6"/>
+        <result column="tem_min12" property="temMin12"/>
+        <result column="tem_max6" property="temMax6"/>
+        <result column="tem_max12" property="temMax12"/>
+        <result column="win_speed_min6" property="winSpeedMin6"/>
+        <result column="win_speed_min12" property="winSpeedMin12"/>
+        <result column="win_speed_max6" property="winSpeedMax6"/>
+        <result column="win_speed_max12" property="winSpeedMax12"/>
+        <result column="win_direction6" property="winDirection6"/>
+        <result column="win_direction12" property="winDirection12"/>
+        <result column="text6" property="text6"/>
+        <result column="text12" property="text12"/>
+        <result column="text_fusion6" property="textFusion6"/>
+        <result column="text_fusion12" property="textFusion12"/>
+    </resultMap>
+    <parameterMap id="commonParaFileEntity" type="com.cdyw.swsw.common.domain.entity.file.FileEntity">
+        <parameter property="id"/>
+        <parameter property="name"/>
+        <parameter property="posFile"/>
+        <parameter property="fileSize"/>
+        <parameter property="type"/>
+        <parameter property="radarcd"/>
+        <parameter property="time"/>
+        <parameter property="layer"/>
+        <parameter property="mcode"/>
+        <parameter property="createTime"/>
+        <parameter property="modifyType"/>
+    </parameterMap>
+
+    <sql id="commonDataProductBaseColumnField">
+        product_id, product_type, create_time, base_time, publish_time, publish_dept, forecaster,signer
+        ,`year`,`number`,subtitle,line,stadium,hours
+    </sql>
+
+    <sql id="commonDataProductBaseEntityField">
+        #{dataProductBase.productId},
+        #{dataProductBase.productType},
+        #{dataProductBase.createTime},
+        #{dataProductBase.baseTime},
+        #{dataProductBase.publishTime},
+        #{dataProductBase.publishDept},
+        #{dataProductBase.forecaster},
+        #{dataProductBase.signer},
+        #{dataProductBase.year},
+        #{dataProductBase.number},
+        #{dataProductBase.subtitle},
+        #{dataProductBase.line},
+        #{dataProductBase.stadium},
+        #{dataProductBase.hours}
+    </sql>
+    <!-- 通用查询字段 -->
+    <sql id="commonFiledSelect">
+        id, name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type
+    </sql>
+    <!-- 通用新增字段 -->
+    <sql id="commonFieldInsert">
+        name, pos_file, file_size, type, radarcd, time, layer, mcode, create_time, modify_type
+    </sql>
+    <!-- 通用新增字段值 -->
+    <sql id="commonFieldInsertValue">
+        #{fileEntity.name},
+        #{fileEntity.posFile},
+        #{fileEntity.fileSize},
+        #{fileEntity.type},
+        #{fileEntity.radarcd},
+        #{fileEntity.time},
+        #{fileEntity.layer},
+        #{fileEntity.mcode},
+        #{fileEntity.createTime},
+        #{fileEntity.modifyType}
+    </sql>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from data_product
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProduct">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into data_product (product_type, product_content, product_path, create_time, publish_status
+        )
+        values (#{productType,jdbcType=INTEGER},
+        #{productContent,jdbcType=VARCHAR},
+        #{productPath,jdbcType=VARCHAR},
+        #{createTime,jdbcType=BIGINT},
+        #{publishStatus,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProduct">
+        update data_product
+        set product_type    = #{productType,jdbcType=INTEGER},
+            product_content = #{productContent,jdbcType=VARCHAR},
+            product_path    = #{productPath,jdbcType=VARCHAR},
+            create_time     = #{createTime,jdbcType=BIGINT},
+            publish_status  = #{publishStatus,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               product_type,
+               product_content,
+               product_path,
+               create_time,
+               publish_status
+        from data_product
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+               product_type,
+               product_content,
+               product_path,
+               create_time,
+               publish_status
+        from data_product
+    </select>
+
+    <select id="selectDataByParam" resultMap="BaseResultMap">
+        select id,
+        product_type,
+        product_content,
+        product_path,
+        create_time,
+        publish_status
+        from data_product
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="dataProduct != null">
+                <if test="dataProduct.productType != null">
+                    and product_type = #{dataProduct.productType}
+                </if>
+                <if test="dataProduct.createTime != null and dataProduct.createTime != ''">
+                    and create_time &gt;= UNIX_TIMESTAMP(FROM_UNIXTIME(#{dataProduct.createTime},'%Y-%m-%d 00:00:00'))
+                    and create_time &lt;= UNIX_TIMESTAMP(FROM_UNIXTIME(#{dataProduct.createTime},'%Y-%m-%d 23:59:59'))
+                </if>
+                <if test="dataProduct.publishStatus != null">
+                    and publish_status = #{dataProduct.publishStatus}
+                </if>
+            </if>
+        </trim>
+        order by create_time
+    </select>
+
+    <update id="updateByParam" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProduct">
+        update data_product
+        <trim prefix="set" suffixOverrides=",">
+            <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+                product_content = #{productContent,jdbcType=VARCHAR},
+            </foreach>
+        </trim>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="testSelectListMap" parameterType="list" resultType="java.lang.String">
+        select
+        <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+            #{item.PARAM_1},
+            #{item.PARAM_2},
+            #{item.PARAM_3},
+            #{item.PARAM_4},
+            #{item.PARAM_5},
+            #{item.PARAM_6},
+            #{item.PARAM_8},
+            #{item.PARAM_9},
+            #{item.PARAM_10},
+            #{item.PARAM_11},
+            #{item.PARAM_12},
+            #{item.PARAM_13},
+            #{item.PARAM_14}
+        </foreach>
+    </select>
+
+    <insert id="insertDataProductBase" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductBase"
+            flushCache="true">
+        insert into data_product_base(
+        <include refid="commonDataProductBaseColumnField"/>
+        )
+        values (<include refid="commonDataProductBaseEntityField"/>)
+    </insert>
+
+    <select id="getDataProductBaseByTimeAndType"
+            parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductBase"
+            resultMap="dataProductBase">
+        select id,
+        <include refid="commonDataProductBaseColumnField"/>
+        from data_product_base
+        where base_time = #{dataProductBase.baseTime}
+        and product_type = #{dataProductBase.productType}
+        order by create_time desc limit 0,1
+    </select>
+
+    <select id="getWeaGridForecast" resultMap="dataProductWeaGridForecast">
+        select id,
+               product_id,
+               `text`
+        from data_product_wea_grid_forecast
+        where product_id = #{productId}
+    </select>
+
+    <insert id="insertDataProduct" parameterMap="commonParaFileEntity" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        <!-- selectKey 对于返回主键至关重要 -->
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into data_product(<include refid="commonFieldInsert"/>)
+        values (<include refid="commonFieldInsertValue"/>)
+    </insert>
+
+    <select id="getHistoryDataProductByTime" resultMap="dataProductBase">
+        select id,
+        <include refid="commonDataProductBaseColumnField"/>
+        from data_product_base where base_time = #{baseTime}
+        and product_type = #{type}
+    </select>
+
+    <insert id="insertWeaShortForecast"
+            parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductWeaShortForecast">
+        insert into data_product_wea_short_forecast(product_id, tem_min6, tem_min12, tem_max6, tem_max12,
+                                                    win_speed_min6, win_speed_min12,
+                                                    win_speed_max6, win_speed_max12,
+                                                    win_direction6, win_direction12, text6, text12, text_fusion6,
+                                                    text_fusion12)
+        values (#{dataProductWeaShortForecast.productId}, #{dataProductWeaShortForecast.temMin6},
+                #{dataProductWeaShortForecast.temMin12},
+                #{dataProductWeaShortForecast.temMax6}, #{dataProductWeaShortForecast.temMax12},
+                #{dataProductWeaShortForecast.winSpeedMin6}, #{dataProductWeaShortForecast.winSpeedMin12},
+                #{dataProductWeaShortForecast.winSpeedMax6}, #{dataProductWeaShortForecast.winSpeedMax12},
+                #{dataProductWeaShortForecast.winDirection6}, #{dataProductWeaShortForecast.winDirection12},
+                #{dataProductWeaShortForecast.text6}, #{dataProductWeaShortForecast.text12},
+                #{dataProductWeaShortForecast.textFusion6},
+                #{dataProductWeaShortForecast.textFusion12})
+    </insert>
+
+    <insert id="insertWeaGridForecast"
+            parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductWeaGridForecast">
+        insert into data_product_wea_grid_forecast(product_id, `text`)
+        values (#{dataProductWeaGridForecast.productId}, #{dataProductWeaGridForecast.text})
+    </insert>
+
+    <select id="getDataProductByEntity" resultMap="commonFileEntity" parameterMap="commonParaFileEntity">
+        select
+        <include refid="commonFiledSelect"/>
+        from data_product where `name` = #{fileEntity.name}
+        and pos_file = #{fileEntity.posFile}
+        and file_size = #{fileEntity.fileSize}
+        and type = #{fileEntity.type}
+        and `time` = #{fileEntity.time}
+        and create_time = #{fileEntity.createTime}
+    </select>
+</mapper>

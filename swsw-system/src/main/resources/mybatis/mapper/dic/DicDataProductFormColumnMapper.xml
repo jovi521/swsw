@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicDataProductFormColumnMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicDataProductFormColumn">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="column_key" jdbcType="VARCHAR" property="columnKey"/>
+        <result column="column_name" jdbcType="VARCHAR" property="columnName"/>
+        <result column="data_product_type" jdbcType="VARCHAR" property="dataProductType"/>
+    </resultMap>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select *
+        from dic_data_product_form_column
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByType" resultMap="BaseResultMap" parameterType="string">
+        SELECT *
+        from dic_data_product_form_column
+        WHERE FIND_IN_SET(#{dataProductType,jdbcType=VARCHAR}, data_product_type)
+    </select>
+
+    <select id="selectByColumnKey" resultMap="BaseResultMap" parameterType="string">
+        select *
+        from dic_data_product_form_column
+        where column_key = #{columnKey,jdbcType=VARCHAR}
+    </select>
+</mapper>

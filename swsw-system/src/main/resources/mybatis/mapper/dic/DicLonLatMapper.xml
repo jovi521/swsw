@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.dic.DicLonLatMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.ao.dic.DicLonLat">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="lon" jdbcType="REAL" property="lon"/>
+        <result column="lat" jdbcType="REAL" property="lat"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
+        <result column="location" jdbcType="VARCHAR" property="location"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from dic_lonlat
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicLonLat">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into dic_lonlat (lon, lat, code, `location`,
+        `type`)
+        values (#{lon,jdbcType=REAL}, #{lat,jdbcType=REAL}, #{code,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR},
+        #{type,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.ao.dic.DicLonLat">
+        update dic_lonlat
+        set lon        = #{lon,jdbcType=REAL},
+            lat        = #{lat,jdbcType=REAL},
+            code       = #{code,jdbcType=VARCHAR},
+            `location` = #{location,jdbcType=VARCHAR},
+            `type`     = #{type,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, lon, lat, code, `location`, `type`
+        from dic_lonlat
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, lon, lat, code, `location`, `type`
+        from dic_lonlat
+    </select>
+
+    <select id="getLonLatByPara" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id, lon, lat, code,
+        SUBSTRING_INDEX( location, '气象观测站', 1 ) as 'location',
+        type
+        from dic_lonlat
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="lon != null">
+                and lon like #{lon}
+            </if>
+            <if test="lat != null">
+                and lat like #{lat}
+            </if>
+            <if test="location != null">
+                and location like concat('%', #{location} , '%')
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="type == null">
+                and type = 1
+            </if>
+            <if test="parentCode != '' and parentCode != null">
+                and parent_code = #{parentCode}
+            </if>
+        </trim>
+        order by id desc
+    </select>
+
+    <select id="getLonLatByCode" resultMap="BaseResultMap">
+        select id, lon, lat, code, location, type
+        from dic_lonlat
+        <where>
+            <if test="code != null">
+                and code = #{code}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <select id="getLonLatByParentCode" resultMap="BaseResultMap">
+        select id, lon, lat, code, parent_code, location, type
+        from dic_lonlat
+        <where>
+            <if test="parentCode != null">
+                and parent_code = #{parentCode}
+            </if>
+        </where>
+    </select>
+</mapper>

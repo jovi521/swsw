@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.product.DataProductWarningSignalMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.entity.product.DataProductWarningSignal">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="data_product_id" jdbcType="INTEGER" property="dataProductId"/>
+        <result column="warning_signal_id" jdbcType="INTEGER" property="warningSignalId"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from data_product_warning_signal
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductWarningSignal">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into data_product_warning_signal (data_product_id, warning_signal_id)
+        values (#{dataProductId,jdbcType=INTEGER}, #{warningSignalId,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductWarningSignal">
+        update data_product_warning_signal
+        set data_product_id   = #{dataProductId,jdbcType=INTEGER},
+            warning_signal_id = #{warningSignalId,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, data_product_id, warning_signal_id
+        from data_product_warning_signal
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, data_product_id, warning_signal_id
+        from data_product_warning_signal
+    </select>
+
+    <select id="selectByDataProductId" resultMap="BaseResultMap">
+        select warning_signal_id
+        from data_product_warning_signal
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="dataProductId != null and dataProductId != ''">
+                and data_product_id = #{dataProductId}
+            </if>
+        </trim>
+    </select>
+</mapper>

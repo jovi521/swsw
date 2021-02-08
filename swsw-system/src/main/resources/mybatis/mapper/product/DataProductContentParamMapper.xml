@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyw.swsw.system.dao.product.DataProductContentParamMapper">
+    <resultMap id="BaseResultMap" type="com.cdyw.swsw.common.domain.entity.product.DataProductContentParam">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_id" jdbcType="INTEGER" property="dataProductId"/>
+        <result column="para_publish_time" jdbcType="VARCHAR" property="paraPublishTime"/>
+        <result column="para_disaster_type" jdbcType="VARCHAR" property="paraDisasterType"/>
+        <result column="para_warning_level" jdbcType="VARCHAR" property="paraWarningLevel"/>
+        <result column="para_affected_area" jdbcType="VARCHAR" property="paraAffectedArea"/>
+        <result column="para_appeared_weather" jdbcType="VARCHAR" property="paraAppearedWeather"/>
+        <result column="para_appearing_time" jdbcType="VARCHAR" property="paraAppearingTime"/>
+        <result column="para_affecting_area" jdbcType="VARCHAR" property="paraAffectingArea"/>
+        <result column="para_disaster_phenomenon1" jdbcType="VARCHAR" property="paraDisasterPhenomenon1"/>
+        <result column="para_disaster_phenomenon2" jdbcType="VARCHAR" property="paraDisasterPhenomenon2"/>
+        <result column="para_affected_stadium" jdbcType="VARCHAR" property="paraAffectedStadium"/>
+        <result column="para_affected_event" jdbcType="VARCHAR" property="paraAffectedEvent"/>
+        <result column="para_warning_start_time" jdbcType="VARCHAR" property="paraWarningStartTime"/>
+        <result column="para_warning_end_time" jdbcType="VARCHAR" property="paraWarningEndTime"/>
+        <result column="para_publish_dept" jdbcType="VARCHAR" property="paraPublishDept"/>
+        <result column="para_send_dept" jdbcType="VARCHAR" property="paraSendDept"/>
+        <result column="para_forecaster" jdbcType="VARCHAR" property="paraForecaster"/>
+        <result column="para_approver" jdbcType="VARCHAR" property="paraApprover"/>
+        <result column="para_signer" jdbcType="VARCHAR" property="paraSigner"/>
+        <result column="para_number" jdbcType="INTEGER" property="paraNumber"/>
+        <result column="para_disaster_type2" jdbcType="INTEGER" property="paraDisasterType2"/>
+        <result column="para_warning_level2" jdbcType="INTEGER" property="paraWarningLevel2"/>
+    </resultMap>
+
+    <sql id="colResult">
+        data_product_id,
+        para_publish_time,
+        para_disaster_type,
+        para_warning_level,
+        para_affected_area,
+        para_appeared_weather,
+        para_appearing_time,
+        para_affecting_area,
+        para_disaster_phenomenon1,
+        para_disaster_phenomenon2,
+        para_affected_stadium,
+        para_affected_event,
+        para_warning_start_time,
+        para_warning_end_time,
+        para_publish_dept,
+        para_send_dept,
+        para_forecaster,
+        para_approver,
+        para_signer,
+        para_number,
+        para_disaster_type2,
+        para_warning_level2
+    </sql>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from data_product_content_param
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductContentParam">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into data_product_content_param (
+        <include refid="colResult">
+        </include>
+        )
+        values (#{dataProductId,jdbcType=INTEGER},
+        #{paraPublishTime,jdbcType=VARCHAR},
+        #{paraDisasterType,jdbcType=VARCHAR},
+        #{paraWarningLevel,jdbcType=VARCHAR} ,
+        #{paraAffectedArea,jdbcType=VARCHAR},
+        #{paraAppearedWeather,jdbcType=VARCHAR},
+        #{paraAppearingTime,jdbcType=VARCHAR},
+        #{paraAffectingArea,jdbcType=VARCHAR},
+        #{paraDisasterPhenomenon1,jdbcType=VARCHAR},
+        #{paraDisasterPhenomenon2,jdbcType=VARCHAR},
+        #{paraAffectedStadium,jdbcType=VARCHAR},
+        #{paraAffectedEvent,jdbcType=VARCHAR},
+        #{paraWarningStartTime,jdbcType=VARCHAR},
+        #{paraWarningEndTime,jdbcType=VARCHAR},
+        #{paraPublishDept,jdbcType=VARCHAR},
+        #{paraSendDept,jdbcType=VARCHAR},
+        #{paraForecaster,jdbcType=VARCHAR},
+        #{paraApprover,jdbcType=VARCHAR},
+        #{paraSigner,jdbcType=VARCHAR},
+        #{paraNumber,jdbcType=INTEGER},
+        #{paraDisasterType2,jdbcType=VARCHAR},
+        #{paraWarningLevel2,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertFinal" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductContentParam">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into data_product_content_param_final (
+        <include refid="colResult">
+        </include>
+        )
+        values (#{dataProductId,jdbcType=INTEGER},
+        #{paraPublishTime,jdbcType=VARCHAR},
+        #{paraDisasterType,jdbcType=VARCHAR},
+        #{paraWarningLevel,jdbcType=VARCHAR} ,
+        #{paraAffectedArea,jdbcType=VARCHAR},
+        #{paraAppearedWeather,jdbcType=VARCHAR},
+        #{paraAppearingTime,jdbcType=VARCHAR},
+        #{paraAffectingArea,jdbcType=VARCHAR},
+        #{paraDisasterPhenomenon1,jdbcType=VARCHAR},
+        #{paraDisasterPhenomenon2,jdbcType=VARCHAR},
+        #{paraAffectedStadium,jdbcType=VARCHAR},
+        #{paraAffectedEvent,jdbcType=VARCHAR},
+        #{paraWarningStartTime,jdbcType=VARCHAR},
+        #{paraWarningEndTime,jdbcType=VARCHAR},
+        #{paraPublishDept,jdbcType=VARCHAR},
+        #{paraSendDept,jdbcType=VARCHAR},
+        #{paraForecaster,jdbcType=VARCHAR},
+        #{paraApprover,jdbcType=VARCHAR},
+        #{paraSigner,jdbcType=VARCHAR},
+        #{paraNumber,jdbcType=INTEGER},
+        #{paraDisasterType2,jdbcType=VARCHAR},
+        #{paraWarningLevel2,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.cdyw.swsw.common.domain.entity.product.DataProductContentParam">
+        update data_product_content_param
+        set data_product_id           = #{dataProductId,jdbcType=INTEGER},
+            para_publish_time         = #{paraPublishTime,jdbcType=VARCHAR},
+            para_disaster_type        = #{paraDisasterType,jdbcType=VARCHAR},
+            para_warning_level        = #{paraWarningLevel,jdbcType=VARCHAR},
+            para_affected_area        = #{paraAffectedArea,jdbcType=VARCHAR},
+            para_appeared_weather     = #{paraAppearedWeather,jdbcType=VARCHAR},
+            para_appearing_time       = #{paraAppearingTime,jdbcType=VARCHAR},
+            para_affecting_area       = #{paraAffectingArea,jdbcType=VARCHAR},
+            para_disaster_phenomenon1 = #{paraDisasterPhenomenon1,jdbcType=VARCHAR},
+            para_disaster_phenomenon2 = #{paraDisasterPhenomenon2,jdbcType=VARCHAR},
+            para_affected_stadium     = #{paraAffectedStadium,jdbcType=VARCHAR},
+            para_affected_event       = #{paraAffectedEvent,jdbcType=VARCHAR},
+            para_warning_start_time   = #{paraWarningStartTime,jdbcType=VARCHAR},
+            para_warning_end_time     = #{paraWarningEndTime,jdbcType=VARCHAR},
+            para_publish_dept         = #{paraPublishDept,jdbcType=VARCHAR},
+            para_send_dept            = #{paraSendDept,jdbcType=VARCHAR},
+            para_forecaster           = #{paraForecaster,jdbcType=VARCHAR},
+            para_approver             = #{paraApprover,jdbcType=VARCHAR},
+            para_signer               = #{paraSigner,jdbcType=VARCHAR},
+            para_number               = #{paraNumber,jdbcType=INTEGER},
+            para_disaster_type2       = #{paraDisasterType2,jdbcType=VARCHAR},
+            para_warning_level2       = #{paraWarningLevel2,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+        <include refid="colResult">
+        </include>
+        from data_product_content_param
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+        <include refid="colResult">
+        </include>
+        from data_product_content_param
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+        <include refid="colResult">
+        </include>
+        from data_product_content_param
+        where data_product_id = #{id,jdbcType=INTEGER}
+    </select>
+</mapper>
